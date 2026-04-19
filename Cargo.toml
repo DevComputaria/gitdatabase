@@ -1,0 +1,23 @@
+[workspace]
+members = [
+    "crates/gitbase-cli",
+    "crates/gitbase-db",
+    "crates/gitbase-pgwire",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+rust-version = "1.80"
+
+[workspace.dependencies]
+anyhow = "1"
+async-trait = "0.1"
+clap = { version = "4", features = ["derive", "env"] }
+pgwire = "0.38"
+sqlx = { version = "0.8", features = ["postgres", "runtime-tokio", "migrate", "macros"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "signal", "net"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter"] }
+futures = "0.3"
