@@ -11,6 +11,7 @@ path = "src/main.rs"
 anyhow.workspace = true
 clap.workspace = true
 gitbase-db = { path = "../gitbase-db" }
+gitbase-loader = { path = "../gitbase-loader" }
 gitbase-pgwire = { path = "../gitbase-pgwire" }
 tokio.workspace = true
 tracing.workspace = true

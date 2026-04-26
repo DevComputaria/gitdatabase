@@ -2,6 +2,8 @@ use anyhow::Result;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
 
+pub mod metadata;
+
 /// Create a connection pool to PostgreSQL and run migrations.
 pub async fn connect(database_url: &str, max_connections: u32) -> Result<PgPool> {
     let pool = PgPoolOptions::new()

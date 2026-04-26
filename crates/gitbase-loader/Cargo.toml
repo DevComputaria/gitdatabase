@@ -1,0 +1,16 @@
+[package]
+name = "gitbase-loader"
+version = "0.1.0"
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+gitbase-db = { path = "../gitbase-db" }
+gitbase-git = { path = "../gitbase-git" }
+sqlx.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+tempfile = "3"
+git2 = "0.20"
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
