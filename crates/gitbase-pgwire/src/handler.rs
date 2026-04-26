@@ -137,9 +137,7 @@ impl GitbaseHandler {
             &self.blob_config,
         )
         .await
-        .map_err(|e| {
-            PgWireError::ApiError(Box::new(std::io::Error::other(e.to_string())))
-        })?;
+        .map_err(|e| PgWireError::ApiError(Box::new(std::io::Error::other(e.to_string()))))?;
 
         Ok(())
     }

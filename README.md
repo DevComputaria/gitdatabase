@@ -31,6 +31,29 @@ GitDatabase é uma solução que indexa repositórios Git e expõe os dados em P
 
 ---
 
+## Pre-commit (fmt + clippy)
+
+Este repositório inclui hooks via **pre-commit** para rodar `cargo fmt` e `cargo clippy`
+antes de commitar e antes de fazer push.
+
+### Instalação
+
+Instale o pre-commit (exemplos):
+
+- `pipx install pre-commit`
+- `pip install --user pre-commit`
+- `brew install pre-commit`
+
+Depois, ative os hooks:
+
+- `pre-commit install --hook-type pre-commit --hook-type pre-push`
+
+Para rodar manualmente em todos os arquivos:
+
+- `pre-commit run --all-files`
+
+---
+
 ## Subindo o Postgres (Docker)
 
 ```bash
