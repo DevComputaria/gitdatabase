@@ -50,7 +50,7 @@ async fn index_uast_populates_functions() -> Result<()> {
     let pool = connect(&database_url, 5).await?;
     clear_tables(&pool).await?;
 
-    let _ = sync_repositories(&pool, &[repo_path.clone()]).await?;
+    let _ = sync_repositories(&pool, std::slice::from_ref(&repo_path)).await?;
 
     let blob_hashes: Vec<String> =
         sqlx::query_scalar("SELECT DISTINCT blob_hash FROM gitbase.files")
@@ -59,7 +59,7 @@ async fn index_uast_populates_functions() -> Result<()> {
 
     let _ = hydrate_blobs(
         &pool,
-        &[repo_path.clone()],
+        std::slice::from_ref(&repo_path),
         &blob_hashes,
         &BlobHydrationConfig::default(),
     )

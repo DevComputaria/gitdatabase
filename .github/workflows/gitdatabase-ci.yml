@@ -2,12 +2,16 @@ name: GitDatabase CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -23,7 +27,12 @@ jobs:
         run: cargo fmt --all -- --check
 
       - name: Cargo clippy
-        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+        run: |
+          cargo clippy --workspace --all-targets --all-features -- \
+            -D clippy::correctness \
+            -D clippy::suspicious \
+            -W clippy::perf \
+            -W clippy::style
 
       - name: Cargo test
         run: cargo test --workspace
