@@ -2,8 +2,8 @@ use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
 use anyhow::{anyhow, Result};
-use gix::{ObjectId, Repository};
 use gix::odb::HeaderExt;
+use gix::{ObjectId, Repository};
 use sha1::{Digest, Sha1};
 use tracing::debug;
 use walkdir::WalkDir;
@@ -175,7 +175,12 @@ pub fn collect_refs(repo: &Repository) -> Result<Vec<ReferenceMetadata>> {
             .target()
             .try_id()
             .map(|id| id.to_string())
-            .or_else(|| reference.peel_to_id_in_place().ok().map(|id| id.to_string()))
+            .or_else(|| {
+                reference
+                    .peel_to_id_in_place()
+                    .ok()
+                    .map(|id| id.to_string())
+            })
             .ok_or_else(|| anyhow!("reference {name} has no target"))?;
 
         let kind = if name.starts_with("refs/heads/") {
@@ -221,7 +226,10 @@ pub fn collect_commits(repo: &Repository, ref_targets: &[String]) -> Result<Vec<
             let commit = commit.decode()?;
 
             let tree_hash = commit.tree().to_string();
-            let parents = commit.parents().map(|id| id.to_string()).collect::<Vec<_>>();
+            let parents = commit
+                .parents()
+                .map(|id| id.to_string())
+                .collect::<Vec<_>>();
 
             let author_name = Some(commit.author().name.to_string());
             let author_email = Some(commit.author().email.to_string());

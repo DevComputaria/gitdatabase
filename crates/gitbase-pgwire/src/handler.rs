@@ -4,7 +4,9 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use futures::stream;
 use pgwire::api::auth::cleartext::CleartextPasswordAuthStartupHandler;
-use pgwire::api::auth::{AuthSource, DefaultServerParameterProvider, LoginInfo, Password, StartupHandler};
+use pgwire::api::auth::{
+    AuthSource, DefaultServerParameterProvider, LoginInfo, Password, StartupHandler,
+};
 use pgwire::api::query::SimpleQueryHandler;
 use pgwire::api::results::{DataRowEncoder, FieldFormat, FieldInfo, QueryResponse, Response, Tag};
 use pgwire::api::{ClientInfo, PgWireServerHandlers, Type};
@@ -128,14 +130,19 @@ impl GitbaseHandler {
             return Ok(());
         }
 
-        hydrate_blobs(&self.pool, &self.repo_roots, &blob_hashes, &self.blob_config)
-            .await
-            .map_err(|e| {
-                PgWireError::ApiError(Box::new(std::io::Error::new(
-                    std::io::ErrorKind::Other,
-                    e.to_string(),
-                )))
-            })?;
+        hydrate_blobs(
+            &self.pool,
+            &self.repo_roots,
+            &blob_hashes,
+            &self.blob_config,
+        )
+        .await
+        .map_err(|e| {
+            PgWireError::ApiError(Box::new(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                e.to_string(),
+            )))
+        })?;
 
         Ok(())
     }
@@ -192,7 +199,8 @@ fn sqlx_type_to_pgwire(type_name: &str) -> Type {
 /// Factory used by pgwire to obtain handler instances per connection.
 pub struct GitbaseServerFactory {
     handler: Arc<GitbaseHandler>,
-    startup_handler: Arc<CleartextPasswordAuthStartupHandler<GitbaseAuthSource, DefaultServerParameterProvider>>,
+    startup_handler:
+        Arc<CleartextPasswordAuthStartupHandler<GitbaseAuthSource, DefaultServerParameterProvider>>,
 }
 
 impl GitbaseServerFactory {

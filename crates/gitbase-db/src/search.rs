@@ -14,7 +14,7 @@ pub async fn fetch_search_candidates(
 ) -> Result<Vec<SearchCandidate>> {
     let rows = if let Some(limit) = max_candidates {
         sqlx::query(
-                        "SELECT DISTINCT ON (f.blob_hash) f.blob_hash, f.path, f.language \
+            "SELECT DISTINCT ON (f.blob_hash) f.blob_hash, f.path, f.language \
                          FROM gitbase.files f \
                          JOIN gitbase.blobs b ON b.hash = f.blob_hash \
                          LEFT JOIN gitbase.code_index ci ON ci.blob_hash = f.blob_hash \
@@ -29,7 +29,7 @@ pub async fn fetch_search_candidates(
         .await?
     } else {
         sqlx::query(
-                        "SELECT DISTINCT ON (f.blob_hash) f.blob_hash, f.path, f.language \
+            "SELECT DISTINCT ON (f.blob_hash) f.blob_hash, f.path, f.language \
                          FROM gitbase.files f \
                          JOIN gitbase.blobs b ON b.hash = f.blob_hash \
                          LEFT JOIN gitbase.code_index ci ON ci.blob_hash = f.blob_hash \

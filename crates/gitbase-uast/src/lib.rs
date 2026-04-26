@@ -58,7 +58,13 @@ pub fn parse_uast(language: Language, source: &str) -> Result<UastDocument> {
     let mut imports = Vec::new();
 
     let root = tree.root_node();
-    collect_nodes(language, root, source.as_bytes(), &mut functions, &mut imports);
+    collect_nodes(
+        language,
+        root,
+        source.as_bytes(),
+        &mut functions,
+        &mut imports,
+    );
 
     Ok(UastDocument {
         language: match language {

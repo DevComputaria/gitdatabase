@@ -3,7 +3,9 @@ use std::fs;
 use anyhow::Result;
 use git2::{IndexAddOption, Repository, Signature};
 use gitbase_db::connect;
-use gitbase_loader::{hydrate_blobs, index_search, sync_repositories, BlobHydrationConfig, SearchIndexConfig};
+use gitbase_loader::{
+    hydrate_blobs, index_search, sync_repositories, BlobHydrationConfig, SearchIndexConfig,
+};
 use sqlx::PgPool;
 use tempfile::TempDir;
 
@@ -55,12 +57,20 @@ async fn search_index_populates_code_index() -> Result<()> {
         &pool,
         &[repo_path.clone()],
         &[blob_hash.clone()],
-        &BlobHydrationConfig { max_blob_bytes: 1_000_000 },
+        &BlobHydrationConfig {
+            max_blob_bytes: 1_000_000,
+        },
     )
     .await?;
     assert!(hydration_report.hydrated >= 1);
 
-    let search_report = index_search(&pool, &SearchIndexConfig { max_candidates: None }).await?;
+    let search_report = index_search(
+        &pool,
+        &SearchIndexConfig {
+            max_candidates: None,
+        },
+    )
+    .await?;
     assert!(search_report.indexed >= 1);
 
     let indexed = sqlx::query_scalar::<_, i64>(

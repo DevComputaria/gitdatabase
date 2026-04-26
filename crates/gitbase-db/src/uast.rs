@@ -34,9 +34,11 @@ pub async fn uast_cache_exists(pool: &PgPool, blob_hash: &str) -> Result<bool> {
     Ok(exists)
 }
 
-pub async fn fetch_uast_candidates(pool: &PgPool, limit: Option<i64>) -> Result<Vec<UastCandidate>> {
-    let base_query =
-        "SELECT DISTINCT f.blob_hash, f.path FROM gitbase.files f\
+pub async fn fetch_uast_candidates(
+    pool: &PgPool,
+    limit: Option<i64>,
+) -> Result<Vec<UastCandidate>> {
+    let base_query = "SELECT DISTINCT f.blob_hash, f.path FROM gitbase.files f\
          JOIN gitbase.blobs b ON b.hash = f.blob_hash\
          WHERE b.content IS NOT NULL";
 

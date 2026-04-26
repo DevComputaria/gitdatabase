@@ -3,7 +3,9 @@ use std::fs;
 use anyhow::Result;
 use git2::{Repository, Signature};
 use gitbase_db::connect;
-use gitbase_loader::{hydrate_blobs, index_uast, sync_repositories, BlobHydrationConfig, UastIndexConfig};
+use gitbase_loader::{
+    hydrate_blobs, index_uast, sync_repositories, BlobHydrationConfig, UastIndexConfig,
+};
 use sqlx::PgPool;
 use tempfile::TempDir;
 
@@ -22,7 +24,10 @@ async fn index_uast_populates_functions() -> Result<()> {
     fs::create_dir_all(&repo_path)?;
     let repo = Repository::init(&repo_path)?;
 
-    fs::write(repo_path.join("main.go"), "package main\n\nfunc main() {}\n")?;
+    fs::write(
+        repo_path.join("main.go"),
+        "package main\n\nfunc main() {}\n",
+    )?;
     fs::write(repo_path.join("lib.rs"), "pub fn hello() {}\n")?;
 
     let mut index = repo.index()?;
@@ -47,9 +52,10 @@ async fn index_uast_populates_functions() -> Result<()> {
 
     let _ = sync_repositories(&pool, &[repo_path.clone()]).await?;
 
-    let blob_hashes: Vec<String> = sqlx::query_scalar("SELECT DISTINCT blob_hash FROM gitbase.files")
-        .fetch_all(&pool)
-        .await?;
+    let blob_hashes: Vec<String> =
+        sqlx::query_scalar("SELECT DISTINCT blob_hash FROM gitbase.files")
+            .fetch_all(&pool)
+            .await?;
 
     let _ = hydrate_blobs(
         &pool,

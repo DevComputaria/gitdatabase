@@ -2,10 +2,10 @@ mod handler;
 
 pub use handler::GitbaseServerFactory;
 
-use std::sync::Arc;
 use anyhow::Result;
-use tokio::net::TcpListener;
 use pgwire::tokio::process_socket;
+use std::sync::Arc;
+use tokio::net::TcpListener;
 
 /// Start the pgwire-compatible TCP server.
 pub async fn serve(bind_addr: &str, factory: Arc<GitbaseServerFactory>) -> Result<()> {

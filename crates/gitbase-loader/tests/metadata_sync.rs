@@ -1,9 +1,9 @@
 use std::fs;
 
 use anyhow::Result;
+use git2::{IndexAddOption, Repository, Signature};
 use gitbase_db::connect;
 use gitbase_loader::sync_repositories;
-use git2::{IndexAddOption, Repository, Signature};
 use sqlx::PgPool;
 use tempfile::TempDir;
 

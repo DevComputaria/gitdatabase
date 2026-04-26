@@ -5,7 +5,10 @@ use clap::Parser;
 use tracing_subscriber::EnvFilter;
 
 #[derive(Parser)]
-#[command(name = "gitbase", about = "Git repository analytics via PostgreSQL wire protocol")]
+#[command(
+    name = "gitbase",
+    about = "Git repository analytics via PostgreSQL wire protocol"
+)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -224,7 +227,9 @@ async fn main() -> Result<()> {
 
             let report = gitbase_loader::index_uast(
                 &pool,
-                &gitbase_loader::UastIndexConfig { max_candidates: limit },
+                &gitbase_loader::UastIndexConfig {
+                    max_candidates: limit,
+                },
             )
             .await?;
 
@@ -247,7 +252,9 @@ async fn main() -> Result<()> {
 
             let report = gitbase_loader::index_search(
                 &pool,
-                &gitbase_loader::SearchIndexConfig { max_candidates: limit },
+                &gitbase_loader::SearchIndexConfig {
+                    max_candidates: limit,
+                },
             )
             .await?;
 
@@ -278,13 +285,8 @@ async fn main() -> Result<()> {
                 max_blob_bytes: blob_max_bytes,
             };
 
-            let report = gitbase_loader::hydrate_missing_blobs(
-                &pool,
-                &roots,
-                &blob_config,
-                limit,
-            )
-            .await?;
+            let report =
+                gitbase_loader::hydrate_missing_blobs(&pool, &roots, &blob_config, limit).await?;
 
             tracing::info!(
                 hydrated = report.hydrated,

@@ -199,12 +199,10 @@ pub async fn fetch_existing_commit_hashes(
     pool: &PgPool,
     repository_id: &str,
 ) -> Result<HashSet<String>> {
-    let rows = sqlx::query(
-        "SELECT hash FROM gitbase.commits WHERE repository_id = $1",
-    )
-    .bind(repository_id)
-    .fetch_all(pool)
-    .await?;
+    let rows = sqlx::query("SELECT hash FROM gitbase.commits WHERE repository_id = $1")
+        .bind(repository_id)
+        .fetch_all(pool)
+        .await?;
 
     Ok(rows
         .into_iter()

@@ -109,35 +109,32 @@ pub async fn fetch_blob_content(pool: &PgPool, hash: &str) -> Result<Option<Vec<
     Ok(row.and_then(|row| row.get::<Option<Vec<u8>>, _>("content")))
 }
 
-pub async fn fetch_missing_blob_hashes(
-    pool: &PgPool,
-    limit: Option<i64>,
-) -> Result<Vec<String>> {
-        let rows = if let Some(limit) = limit {
-                sqlx::query(
-                        r#"SELECT DISTINCT f.blob_hash
+pub async fn fetch_missing_blob_hashes(pool: &PgPool, limit: Option<i64>) -> Result<Vec<String>> {
+    let rows = if let Some(limit) = limit {
+        sqlx::query(
+            r#"SELECT DISTINCT f.blob_hash
 FROM gitbase.files f
 LEFT JOIN gitbase.blobs b ON b.hash = f.blob_hash
 WHERE f.is_binary = false
     AND b.content IS NULL
 ORDER BY f.blob_hash
 LIMIT $1"#,
-                )
-                .bind(limit)
-                .fetch_all(pool)
-                .await?
-        } else {
-                sqlx::query(
-                        r#"SELECT DISTINCT f.blob_hash
+        )
+        .bind(limit)
+        .fetch_all(pool)
+        .await?
+    } else {
+        sqlx::query(
+            r#"SELECT DISTINCT f.blob_hash
 FROM gitbase.files f
 LEFT JOIN gitbase.blobs b ON b.hash = f.blob_hash
 WHERE f.is_binary = false
     AND b.content IS NULL
 ORDER BY f.blob_hash"#,
-                )
-                .fetch_all(pool)
-                .await?
-        };
+        )
+        .fetch_all(pool)
+        .await?
+    };
 
     Ok(rows
         .into_iter()

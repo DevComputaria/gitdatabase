@@ -10,8 +10,8 @@ use gitbase_db::blobs::{
 };
 use gitbase_db::metadata::{
     fetch_existing_commit_hashes, upsert_commit, upsert_commit_parent, upsert_file, upsert_ref,
-    upsert_repository, upsert_tree_entry, CommitRecord, CommitParentRecord, FileRecord,
-    RefRecord, RepositoryRecord, TreeEntryRecord,
+    upsert_repository, upsert_tree_entry, CommitParentRecord, CommitRecord, FileRecord, RefRecord,
+    RepositoryRecord, TreeEntryRecord,
 };
 use gitbase_db::search::{fetch_search_candidates, upsert_code_index};
 use gitbase_db::uast::{
@@ -63,7 +63,9 @@ pub struct UastIndexConfig {
 
 impl Default for UastIndexConfig {
     fn default() -> Self {
-        Self { max_candidates: None }
+        Self {
+            max_candidates: None,
+        }
     }
 }
 
@@ -82,7 +84,9 @@ pub struct SearchIndexConfig {
 
 impl Default for SearchIndexConfig {
     fn default() -> Self {
-        Self { max_candidates: None }
+        Self {
+            max_candidates: None,
+        }
     }
 }
 
@@ -238,7 +242,9 @@ pub async fn hydrate_blobs(
         for repo_path in repo_paths {
             let repo_path_buf = PathBuf::from(repo_path);
             if !repo_roots.is_empty()
-                && !repo_roots.iter().any(|root| repo_path_buf.starts_with(root))
+                && !repo_roots
+                    .iter()
+                    .any(|root| repo_path_buf.starts_with(root))
             {
                 continue;
             }
