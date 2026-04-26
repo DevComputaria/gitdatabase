@@ -5,13 +5,15 @@ use sqlx::PgPool;
 use tracing::info;
 
 use gitbase_db::blobs::{
-    fetch_blob_cache, fetch_blob_content, fetch_blob_locations, touch_blob, upsert_blob,
+    fetch_blob_cache, fetch_blob_content, fetch_blob_locations, fetch_missing_blob_hashes,
+    touch_blob, upsert_blob,
 };
 use gitbase_db::metadata::{
-    upsert_commit, upsert_commit_parent, upsert_file, upsert_ref, upsert_repository,
-    upsert_tree_entry, CommitRecord, CommitParentRecord, FileRecord, RefRecord, RepositoryRecord,
-    TreeEntryRecord,
+    fetch_existing_commit_hashes, upsert_commit, upsert_commit_parent, upsert_file, upsert_ref,
+    upsert_repository, upsert_tree_entry, CommitRecord, CommitParentRecord, FileRecord,
+    RefRecord, RepositoryRecord, TreeEntryRecord,
 };
+use gitbase_db::search::{fetch_search_candidates, upsert_code_index};
 use gitbase_db::uast::{
     clear_uast_projections, fetch_uast_candidates, insert_uast_function, insert_uast_import,
     uast_cache_exists, upsert_uast_cache, UastFunctionRecord, UastImportRecord,
@@ -73,6 +75,25 @@ pub struct UastIndexReport {
     pub skipped_unsupported_language: usize,
 }
 
+#[derive(Debug, Clone)]
+pub struct SearchIndexConfig {
+    pub max_candidates: Option<i64>,
+}
+
+impl Default for SearchIndexConfig {
+    fn default() -> Self {
+        Self { max_candidates: None }
+    }
+}
+
+#[derive(Debug, Default, Clone)]
+pub struct SearchIndexReport {
+    pub indexed: usize,
+    pub skipped_missing_content: usize,
+    pub skipped_non_utf8: usize,
+    pub skipped_empty: usize,
+}
+
 pub async fn sync_repositories(pool: &PgPool, roots: &[PathBuf]) -> Result<SyncReport> {
     let repos = discover_repositories(roots)?;
     let mut report = SyncReport::default();
@@ -108,9 +129,14 @@ pub async fn sync_repositories(pool: &PgPool, roots: &[PathBuf]) -> Result<SyncR
             .map(|reference| reference.target_hash.clone())
             .collect::<Vec<_>>();
         let commit_snapshots = collect_commits(&handle, &ref_targets)?;
+        let existing_commits = fetch_existing_commit_hashes(pool, &repo.id).await?;
 
         for snapshot in commit_snapshots {
             let commit = snapshot.commit;
+            if existing_commits.contains(&commit.hash) {
+                continue;
+            }
+
             let commit_record = CommitRecord {
                 repository_id: repo.id.clone(),
                 hash: commit.hash.clone(),
@@ -249,6 +275,16 @@ pub async fn hydrate_blobs(
     Ok(report)
 }
 
+pub async fn hydrate_missing_blobs(
+    pool: &PgPool,
+    repo_roots: &[PathBuf],
+    config: &BlobHydrationConfig,
+    limit: Option<i64>,
+) -> Result<BlobHydrationReport> {
+    let blob_hashes = fetch_missing_blob_hashes(pool, limit).await?;
+    hydrate_blobs(pool, repo_roots, &blob_hashes, config).await
+}
+
 pub async fn index_uast(pool: &PgPool, config: &UastIndexConfig) -> Result<UastIndexReport> {
     let mut report = UastIndexReport::default();
     let candidates = fetch_uast_candidates(pool, config.max_candidates).await?;
@@ -310,6 +346,50 @@ pub async fn index_uast(pool: &PgPool, config: &UastIndexConfig) -> Result<UastI
         }
 
         report.parsed += 1;
+    }
+
+    Ok(report)
+}
+
+pub async fn index_search(pool: &PgPool, config: &SearchIndexConfig) -> Result<SearchIndexReport> {
+    let mut report = SearchIndexReport::default();
+    let candidates = fetch_search_candidates(pool, config.max_candidates).await?;
+
+    for candidate in candidates {
+        let content = fetch_blob_content(pool, &candidate.blob_hash).await?;
+        let Some(content) = content else {
+            report.skipped_missing_content += 1;
+            continue;
+        };
+
+        let source = match std::str::from_utf8(&content) {
+            Ok(source) => source,
+            Err(_) => {
+                report.skipped_non_utf8 += 1;
+                continue;
+            }
+        };
+
+        let source = if source.contains('\u{0}') {
+            source.replace('\u{0}', " ")
+        } else {
+            source.to_string()
+        };
+
+        if source.trim().is_empty() {
+            report.skipped_empty += 1;
+            continue;
+        }
+
+        let language = candidate.language.or_else(|| {
+            detect_language(&candidate.path).map(|lang| match lang {
+                UastLanguage::Go => "go".to_string(),
+                UastLanguage::Rust => "rust".to_string(),
+            })
+        });
+
+        upsert_code_index(pool, &candidate.blob_hash, language.as_deref(), &source).await?;
+        report.indexed += 1;
     }
 
     Ok(report)

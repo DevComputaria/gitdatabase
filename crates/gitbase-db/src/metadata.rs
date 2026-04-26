@@ -1,5 +1,6 @@
 use anyhow::Result;
-use sqlx::PgPool;
+use sqlx::{PgPool, Row};
+use std::collections::HashSet;
 
 #[derive(Debug, Clone)]
 pub struct RepositoryRecord {
@@ -65,7 +66,7 @@ pub async fn upsert_repository(pool: &PgPool, record: &RepositoryRecord) -> Resu
     sqlx::query(
         "INSERT INTO gitbase.repositories (id, name, path, default_ref, is_bare)\
          VALUES ($1, $2, $3, $4, $5)\
-         ON CONFLICT (id) DO UPDATE\
+         ON CONFLICT (id) DO UPDATE \
          SET name = EXCLUDED.name,\
              path = EXCLUDED.path,\
              default_ref = EXCLUDED.default_ref,\
@@ -86,7 +87,7 @@ pub async fn upsert_ref(pool: &PgPool, record: &RefRecord) -> Result<()> {
     sqlx::query(
         "INSERT INTO gitbase.refs (repository_id, name, target_hash, kind)\
          VALUES ($1, $2, $3, $4)\
-         ON CONFLICT (repository_id, name) DO UPDATE\
+         ON CONFLICT (repository_id, name) DO UPDATE \
          SET target_hash = EXCLUDED.target_hash,\
              kind = EXCLUDED.kind",
     )
@@ -106,7 +107,7 @@ pub async fn upsert_commit(pool: &PgPool, record: &CommitRecord) -> Result<()> {
          committer_name, committer_email, message, committed_at)\
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8,\
          CASE WHEN $9 IS NULL THEN NULL ELSE to_timestamp($9) END)\
-         ON CONFLICT (repository_id, hash) DO UPDATE\
+         ON CONFLICT (repository_id, hash) DO UPDATE \
          SET tree_hash = EXCLUDED.tree_hash,\
              author_name = EXCLUDED.author_name,\
              author_email = EXCLUDED.author_email,\
@@ -134,7 +135,7 @@ pub async fn upsert_commit_parent(pool: &PgPool, record: &CommitParentRecord) ->
     sqlx::query(
         "INSERT INTO gitbase.commit_parents (repository_id, commit_hash, parent_hash, parent_index)\
          VALUES ($1, $2, $3, $4)\
-         ON CONFLICT (repository_id, commit_hash, parent_index) DO UPDATE\
+         ON CONFLICT (repository_id, commit_hash, parent_index) DO UPDATE \
          SET parent_hash = EXCLUDED.parent_hash",
     )
     .bind(&record.repository_id)
@@ -152,7 +153,7 @@ pub async fn upsert_tree_entry(pool: &PgPool, record: &TreeEntryRecord) -> Resul
         "INSERT INTO gitbase.tree_entries (repository_id, commit_hash, path, object_hash,\
          object_type, file_mode, size)\
          VALUES ($1, $2, $3, $4, $5, $6, $7)\
-         ON CONFLICT (repository_id, commit_hash, path) DO UPDATE\
+         ON CONFLICT (repository_id, commit_hash, path) DO UPDATE \
          SET object_hash = EXCLUDED.object_hash,\
              object_type = EXCLUDED.object_type,\
              file_mode = EXCLUDED.file_mode,\
@@ -175,7 +176,7 @@ pub async fn upsert_file(pool: &PgPool, record: &FileRecord) -> Result<()> {
     sqlx::query(
         "INSERT INTO gitbase.files (repository_id, commit_hash, path, blob_hash, language, size, is_binary)\
          VALUES ($1, $2, $3, $4, $5, $6, $7)\
-         ON CONFLICT (repository_id, commit_hash, path) DO UPDATE\
+         ON CONFLICT (repository_id, commit_hash, path) DO UPDATE \
          SET blob_hash = EXCLUDED.blob_hash,\
              language = EXCLUDED.language,\
              size = EXCLUDED.size,\
@@ -192,4 +193,21 @@ pub async fn upsert_file(pool: &PgPool, record: &FileRecord) -> Result<()> {
     .await?;
 
     Ok(())
+}
+
+pub async fn fetch_existing_commit_hashes(
+    pool: &PgPool,
+    repository_id: &str,
+) -> Result<HashSet<String>> {
+    let rows = sqlx::query(
+        "SELECT hash FROM gitbase.commits WHERE repository_id = $1",
+    )
+    .bind(repository_id)
+    .fetch_all(pool)
+    .await?;
+
+    Ok(rows
+        .into_iter()
+        .map(|row| row.get::<String, _>("hash"))
+        .collect())
 }

@@ -18,8 +18,8 @@ pub struct BlobLocation {
 
 pub async fn fetch_blob_cache(pool: &PgPool, hash: &str) -> Result<Option<BlobCache>> {
     let row = sqlx::query(
-        "SELECT hash, size, is_binary, (content IS NOT NULL) AS has_content\
-         FROM gitbase.blobs WHERE hash = $1",
+        r#"SELECT hash, size, is_binary, (content IS NOT NULL) AS has_content
+FROM gitbase.blobs WHERE hash = $1"#,
     )
     .bind(hash)
     .fetch_optional(pool)
@@ -49,18 +49,18 @@ pub async fn upsert_blob(
     content: Option<&[u8]>,
 ) -> Result<()> {
     sqlx::query(
-        "INSERT INTO gitbase.blobs (hash, size, is_binary, content, cached_at, last_used_at)\
-         VALUES ($1, $2, $3, $4, CASE WHEN $4 IS NULL THEN NULL ELSE now() END, now())\
-         ON CONFLICT (hash) DO UPDATE\
-         SET size = EXCLUDED.size,\
-             is_binary = EXCLUDED.is_binary,\
-             content = CASE WHEN EXCLUDED.is_binary THEN NULL ELSE COALESCE(EXCLUDED.content, gitbase.blobs.content) END,\
-             cached_at = CASE\
-                 WHEN EXCLUDED.is_binary THEN NULL\
-                 WHEN EXCLUDED.content IS NOT NULL THEN now()\
-                 ELSE gitbase.blobs.cached_at\
-             END,\
-             last_used_at = now()",
+        r#"INSERT INTO gitbase.blobs (hash, size, is_binary, content, cached_at, last_used_at)
+VALUES ($1, $2, $3, $4, CASE WHEN $4 IS NULL THEN NULL ELSE now() END, now())
+ON CONFLICT (hash) DO UPDATE
+SET size = EXCLUDED.size,
+    is_binary = EXCLUDED.is_binary,
+    content = CASE WHEN EXCLUDED.is_binary THEN NULL ELSE COALESCE(EXCLUDED.content, gitbase.blobs.content) END,
+    cached_at = CASE
+        WHEN EXCLUDED.is_binary THEN NULL
+        WHEN EXCLUDED.content IS NOT NULL THEN now()
+        ELSE gitbase.blobs.cached_at
+    END,
+    last_used_at = now()"#,
     )
     .bind(hash)
     .bind(size)
@@ -81,10 +81,10 @@ pub async fn fetch_blob_locations(
     }
 
     let rows = sqlx::query(
-        "SELECT DISTINCT f.blob_hash, r.id AS repository_id, r.path AS repository_path\
-         FROM gitbase.files f\
-         JOIN gitbase.repositories r ON r.id = f.repository_id\
-         WHERE f.blob_hash = ANY($1)",
+        r#"SELECT DISTINCT f.blob_hash, r.id AS repository_id, r.path AS repository_path
+FROM gitbase.files f
+JOIN gitbase.repositories r ON r.id = f.repository_id
+WHERE f.blob_hash = ANY($1)"#,
     )
     .bind(blob_hashes)
     .fetch_all(pool)
@@ -107,4 +107,40 @@ pub async fn fetch_blob_content(pool: &PgPool, hash: &str) -> Result<Option<Vec<
         .await?;
 
     Ok(row.and_then(|row| row.get::<Option<Vec<u8>>, _>("content")))
+}
+
+pub async fn fetch_missing_blob_hashes(
+    pool: &PgPool,
+    limit: Option<i64>,
+) -> Result<Vec<String>> {
+        let rows = if let Some(limit) = limit {
+                sqlx::query(
+                        r#"SELECT DISTINCT f.blob_hash
+FROM gitbase.files f
+LEFT JOIN gitbase.blobs b ON b.hash = f.blob_hash
+WHERE f.is_binary = false
+    AND b.content IS NULL
+ORDER BY f.blob_hash
+LIMIT $1"#,
+                )
+                .bind(limit)
+                .fetch_all(pool)
+                .await?
+        } else {
+                sqlx::query(
+                        r#"SELECT DISTINCT f.blob_hash
+FROM gitbase.files f
+LEFT JOIN gitbase.blobs b ON b.hash = f.blob_hash
+WHERE f.is_binary = false
+    AND b.content IS NULL
+ORDER BY f.blob_hash"#,
+                )
+                .fetch_all(pool)
+                .await?
+        };
+
+    Ok(rows
+        .into_iter()
+        .map(|row| row.get::<String, _>("blob_hash"))
+        .collect())
 }

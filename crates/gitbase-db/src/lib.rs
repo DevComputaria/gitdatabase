@@ -4,6 +4,7 @@ use sqlx::PgPool;
 
 pub mod blobs;
 pub mod metadata;
+pub mod search;
 pub mod uast;
 
 /// Create a connection pool to PostgreSQL and run migrations.

@@ -28,7 +28,7 @@ CREATE INDEX IF NOT EXISTS uast_cache_language_idx
 CREATE INDEX IF NOT EXISTS uast_cache_jsonb_idx
   ON gitbase.uast_cache USING gin (uast);
 
-CREATE VIEW gitbase.functions AS
+CREATE OR REPLACE VIEW gitbase.functions AS
   SELECT f.repository_id,
          f.commit_hash,
          f.path,
@@ -40,7 +40,7 @@ CREATE VIEW gitbase.functions AS
   FROM gitbase.uast_functions uf
   JOIN gitbase.files f ON f.blob_hash = uf.blob_hash;
 
-CREATE VIEW gitbase.imports AS
+CREATE OR REPLACE VIEW gitbase.imports AS
   SELECT f.repository_id,
          f.commit_hash,
          f.path,

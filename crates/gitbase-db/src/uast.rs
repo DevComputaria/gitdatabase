@@ -67,7 +67,7 @@ pub async fn upsert_uast_cache(
     sqlx::query(
         "INSERT INTO gitbase.uast_cache (blob_hash, language, uast, generated_at)\
          VALUES ($1, $2, $3, now())\
-         ON CONFLICT (blob_hash) DO UPDATE\
+         ON CONFLICT (blob_hash) DO UPDATE \
          SET language = EXCLUDED.language,\
              uast = EXCLUDED.uast,\
              generated_at = now()",
@@ -97,7 +97,7 @@ pub async fn insert_uast_function(pool: &PgPool, record: &UastFunctionRecord) ->
     sqlx::query(
         "INSERT INTO gitbase.uast_functions (blob_hash, name, start_line, end_line, signature)\
          VALUES ($1, $2, $3, $4, $5)\
-         ON CONFLICT (blob_hash, name, start_line) DO UPDATE\
+         ON CONFLICT (blob_hash, name, start_line) DO UPDATE \
          SET end_line = EXCLUDED.end_line,\
              signature = EXCLUDED.signature",
     )
