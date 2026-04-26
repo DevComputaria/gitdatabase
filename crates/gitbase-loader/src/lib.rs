@@ -56,17 +56,9 @@ pub struct BlobHydrationReport {
     pub missing: usize,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct UastIndexConfig {
     pub max_candidates: Option<i64>,
-}
-
-impl Default for UastIndexConfig {
-    fn default() -> Self {
-        Self {
-            max_candidates: None,
-        }
-    }
 }
 
 #[derive(Debug, Default, Clone)]
@@ -77,17 +69,9 @@ pub struct UastIndexReport {
     pub skipped_unsupported_language: usize,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct SearchIndexConfig {
     pub max_candidates: Option<i64>,
-}
-
-impl Default for SearchIndexConfig {
-    fn default() -> Self {
-        Self {
-            max_candidates: None,
-        }
-    }
 }
 
 #[derive(Debug, Default, Clone)]

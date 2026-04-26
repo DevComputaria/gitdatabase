@@ -158,7 +158,7 @@ pub fn read_blob(repo: &Repository, blob_hash: &str, max_bytes: u64) -> Result<B
 
 fn is_binary_blob(data: &[u8]) -> bool {
     let sample_len = data.len().min(8000);
-    if data[..sample_len].iter().any(|byte| *byte == 0) {
+    if data[..sample_len].contains(&0) {
         return true;
     }
     std::str::from_utf8(data).is_err()
