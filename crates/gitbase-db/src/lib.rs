@@ -4,6 +4,7 @@ use sqlx::PgPool;
 
 pub mod blobs;
 pub mod metadata;
+pub mod uast;
 
 /// Create a connection pool to PostgreSQL and run migrations.
 pub async fn connect(database_url: &str, max_connections: u32) -> Result<PgPool> {

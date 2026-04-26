@@ -99,3 +99,12 @@ pub async fn fetch_blob_locations(
         })
         .collect())
 }
+
+pub async fn fetch_blob_content(pool: &PgPool, hash: &str) -> Result<Option<Vec<u8>>> {
+    let row = sqlx::query("SELECT content FROM gitbase.blobs WHERE hash = $1")
+        .bind(hash)
+        .fetch_optional(pool)
+        .await?;
+
+    Ok(row.and_then(|row| row.get::<Option<Vec<u8>>, _>("content")))
+}

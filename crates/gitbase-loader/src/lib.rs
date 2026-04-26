@@ -4,16 +4,23 @@ use anyhow::Result;
 use sqlx::PgPool;
 use tracing::info;
 
-use gitbase_db::blobs::{fetch_blob_cache, fetch_blob_locations, touch_blob, upsert_blob};
+use gitbase_db::blobs::{
+    fetch_blob_cache, fetch_blob_content, fetch_blob_locations, touch_blob, upsert_blob,
+};
 use gitbase_db::metadata::{
     upsert_commit, upsert_commit_parent, upsert_file, upsert_ref, upsert_repository,
     upsert_tree_entry, CommitRecord, CommitParentRecord, FileRecord, RefRecord, RepositoryRecord,
     TreeEntryRecord,
 };
+use gitbase_db::uast::{
+    clear_uast_projections, fetch_uast_candidates, insert_uast_function, insert_uast_import,
+    uast_cache_exists, upsert_uast_cache, UastFunctionRecord, UastImportRecord,
+};
 use gitbase_git::{
     collect_commits, collect_refs, discover_repositories, open_repository,
     open_repository_from_path, read_blob,
 };
+use gitbase_uast::{detect_language, parse_uast, Language as UastLanguage};
 
 #[derive(Debug, Default)]
 pub struct SyncReport {
@@ -45,6 +52,25 @@ pub struct BlobHydrationReport {
     pub skipped_binary: usize,
     pub skipped_oversized: usize,
     pub missing: usize,
+}
+
+#[derive(Debug, Clone)]
+pub struct UastIndexConfig {
+    pub max_candidates: Option<i64>,
+}
+
+impl Default for UastIndexConfig {
+    fn default() -> Self {
+        Self { max_candidates: None }
+    }
+}
+
+#[derive(Debug, Default, Clone)]
+pub struct UastIndexReport {
+    pub parsed: usize,
+    pub skipped_cached: usize,
+    pub skipped_missing_content: usize,
+    pub skipped_unsupported_language: usize,
 }
 
 pub async fn sync_repositories(pool: &PgPool, roots: &[PathBuf]) -> Result<SyncReport> {
@@ -218,6 +244,72 @@ pub async fn hydrate_blobs(
         if !hydrated {
             report.missing += 1;
         }
+    }
+
+    Ok(report)
+}
+
+pub async fn index_uast(pool: &PgPool, config: &UastIndexConfig) -> Result<UastIndexReport> {
+    let mut report = UastIndexReport::default();
+    let candidates = fetch_uast_candidates(pool, config.max_candidates).await?;
+
+    for candidate in candidates {
+        if uast_cache_exists(pool, &candidate.blob_hash).await? {
+            report.skipped_cached += 1;
+            continue;
+        }
+
+        let language = match detect_language(&candidate.path) {
+            Some(language) => language,
+            None => {
+                report.skipped_unsupported_language += 1;
+                continue;
+            }
+        };
+
+        let content = fetch_blob_content(pool, &candidate.blob_hash).await?;
+        let Some(content) = content else {
+            report.skipped_missing_content += 1;
+            continue;
+        };
+
+        let source = std::str::from_utf8(&content).unwrap_or("");
+        let parsed = match language {
+            UastLanguage::Go => parse_uast(UastLanguage::Go, source)?,
+            UastLanguage::Rust => parse_uast(UastLanguage::Rust, source)?,
+        };
+
+        let uast_json = serde_json::to_value(&parsed)?;
+        upsert_uast_cache(pool, &candidate.blob_hash, &parsed.language, &uast_json).await?;
+        clear_uast_projections(pool, &candidate.blob_hash).await?;
+
+        for function in parsed.functions {
+            insert_uast_function(
+                pool,
+                &UastFunctionRecord {
+                    blob_hash: candidate.blob_hash.clone(),
+                    name: function.name,
+                    start_line: function.start_line,
+                    end_line: function.end_line,
+                    signature: function.signature,
+                },
+            )
+            .await?;
+        }
+
+        for import in parsed.imports {
+            insert_uast_import(
+                pool,
+                &UastImportRecord {
+                    blob_hash: candidate.blob_hash.clone(),
+                    source: import.source,
+                    target: import.target,
+                },
+            )
+            .await?;
+        }
+
+        report.parsed += 1;
     }
 
     Ok(report)

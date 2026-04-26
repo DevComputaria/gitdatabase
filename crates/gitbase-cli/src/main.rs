@@ -81,6 +81,21 @@ enum Commands {
         #[arg(long, env = "GITBASE_DB_MAX_CONNECTIONS", default_value_t = 5)]
         max_connections: u32,
     },
+
+    /// Build UAST cache and projections
+    Uast {
+        /// PostgreSQL connection string
+        #[arg(long, env = "DATABASE_URL")]
+        database_url: String,
+
+        /// Maximum database connections
+        #[arg(long, env = "GITBASE_DB_MAX_CONNECTIONS", default_value_t = 5)]
+        max_connections: u32,
+
+        /// Limit number of blobs to process
+        #[arg(long, env = "GITBASE_UAST_LIMIT")]
+        limit: Option<i64>,
+    },
 }
 
 #[tokio::main]
@@ -153,6 +168,29 @@ async fn main() -> Result<()> {
             let pool = gitbase_db::connect(&database_url, max_connections).await?;
             gitbase_db::health_check(&pool).await?;
             tracing::info!("health check passed");
+        }
+        Commands::Uast {
+            database_url,
+            max_connections,
+            limit,
+        } => {
+            let pool = gitbase_db::connect(&database_url, max_connections).await?;
+            gitbase_db::health_check(&pool).await?;
+            tracing::info!("health check passed");
+
+            let report = gitbase_loader::index_uast(
+                &pool,
+                &gitbase_loader::UastIndexConfig { max_candidates: limit },
+            )
+            .await?;
+
+            tracing::info!(
+                parsed = report.parsed,
+                skipped_cached = report.skipped_cached,
+                skipped_missing_content = report.skipped_missing_content,
+                skipped_unsupported_language = report.skipped_unsupported_language,
+                "uast indexing completed"
+            );
         }
     }
 

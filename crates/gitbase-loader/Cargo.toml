@@ -7,6 +7,8 @@ edition.workspace = true
 anyhow.workspace = true
 gitbase-db = { path = "../gitbase-db" }
 gitbase-git = { path = "../gitbase-git" }
+gitbase-uast = { path = "../gitbase-uast" }
+serde_json.workspace = true
 sqlx.workspace = true
 tracing.workspace = true
 
