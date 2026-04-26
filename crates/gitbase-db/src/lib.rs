@@ -2,6 +2,7 @@ use anyhow::Result;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
 
+pub mod blobs;
 pub mod metadata;
 
 /// Create a connection pool to PostgreSQL and run migrations.

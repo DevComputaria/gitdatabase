@@ -3,46 +3,33 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use futures::stream;
-use pgwire::api::auth::noop::NoopStartupHandler;
+use pgwire::api::auth::cleartext::CleartextPasswordAuthStartupHandler;
+use pgwire::api::auth::{AuthSource, DefaultServerParameterProvider, LoginInfo, Password, StartupHandler};
 use pgwire::api::query::SimpleQueryHandler;
 use pgwire::api::results::{DataRowEncoder, FieldFormat, FieldInfo, QueryResponse, Response, Tag};
 use pgwire::api::{ClientInfo, PgWireServerHandlers, Type};
 use pgwire::error::{PgWireError, PgWireResult};
-use pgwire::messages::{PgWireBackendMessage, PgWireFrontendMessage};
 use sqlx::postgres::PgRow;
 use sqlx::{Column, PgPool, Row, TypeInfo};
+use std::path::PathBuf;
 
-use futures::Sink;
+use gitbase_loader::{hydrate_blobs, BlobHydrationConfig};
 
 /// Handles incoming PostgreSQL wire-protocol queries by forwarding them to a
 /// real PostgreSQL database through sqlx.
 pub struct GitbaseHandler {
     pool: PgPool,
+    repo_roots: Vec<PathBuf>,
+    blob_config: BlobHydrationConfig,
 }
 
 impl GitbaseHandler {
-    pub fn new(pool: PgPool) -> Self {
-        Self { pool }
-    }
-}
-
-#[async_trait]
-impl NoopStartupHandler for GitbaseHandler {
-    async fn post_startup<C>(
-        &self,
-        client: &mut C,
-        _message: PgWireFrontendMessage,
-    ) -> PgWireResult<()>
-    where
-        C: ClientInfo + Sink<PgWireBackendMessage> + Unpin + Send,
-        C::Error: Debug,
-        PgWireError: From<<C as Sink<PgWireBackendMessage>>::Error>,
-    {
-        tracing::info!(
-            addr = %client.socket_addr(),
-            "client connected"
-        );
-        Ok(())
+    pub fn new(pool: PgPool, repo_roots: Vec<PathBuf>, blob_config: BlobHydrationConfig) -> Self {
+        Self {
+            pool,
+            repo_roots,
+            blob_config,
+        }
     }
 }
 
@@ -58,6 +45,7 @@ impl SimpleQueryHandler for GitbaseHandler {
 
         // For SELECT queries, fetch rows and stream them back.
         if trimmed.starts_with("SELECT") {
+            self.maybe_hydrate_blobs(query).await?;
             let rows: Vec<PgRow> = sqlx::query(query)
                 .fetch_all(&self.pool)
                 .await
@@ -133,6 +121,54 @@ impl SimpleQueryHandler for GitbaseHandler {
     }
 }
 
+impl GitbaseHandler {
+    async fn maybe_hydrate_blobs(&self, query: &str) -> PgWireResult<()> {
+        let blob_hashes = extract_blob_hashes(query);
+        if blob_hashes.is_empty() {
+            return Ok(());
+        }
+
+        hydrate_blobs(&self.pool, &self.repo_roots, &blob_hashes, &self.blob_config)
+            .await
+            .map_err(|e| {
+                PgWireError::ApiError(Box::new(std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    e.to_string(),
+                )))
+            })?;
+
+        Ok(())
+    }
+}
+
+fn extract_blob_hashes(query: &str) -> Vec<String> {
+    let lower = query.to_lowercase();
+    let mut hashes = Vec::new();
+    let mut offset = 0;
+
+    while let Some(pos) = lower[offset..].find("blob_hash") {
+        let start = offset + pos;
+        let fragment = &query[start..];
+        if let Some(quote_start) = fragment.find('\'') {
+            let start_idx = start + quote_start + 1;
+            if query.len() >= start_idx + 40 {
+                let candidate = &query[start_idx..start_idx + 40];
+                if candidate.chars().all(|c| c.is_ascii_hexdigit()) {
+                    hashes.push(candidate.to_string());
+                }
+            }
+        }
+        offset = start + 9;
+    }
+
+    hashes.sort();
+    hashes.dedup();
+    if hashes.len() > 50 {
+        hashes.truncate(50);
+    }
+    hashes
+}
+
 /// Maps sqlx type names to pgwire Type constants.
 fn sqlx_type_to_pgwire(type_name: &str) -> Type {
     match type_name {
@@ -156,12 +192,28 @@ fn sqlx_type_to_pgwire(type_name: &str) -> Type {
 /// Factory used by pgwire to obtain handler instances per connection.
 pub struct GitbaseServerFactory {
     handler: Arc<GitbaseHandler>,
+    startup_handler: Arc<CleartextPasswordAuthStartupHandler<GitbaseAuthSource, DefaultServerParameterProvider>>,
 }
 
 impl GitbaseServerFactory {
-    pub fn new(pool: PgPool) -> Self {
+    pub fn new(
+        pool: PgPool,
+        repo_roots: Vec<PathBuf>,
+        blob_config: BlobHydrationConfig,
+        auth_user: String,
+        auth_password: String,
+    ) -> Self {
+        let auth_source = GitbaseAuthSource {
+            user: auth_user,
+            password: auth_password,
+        };
+        let startup_handler = Arc::new(CleartextPasswordAuthStartupHandler::new(
+            auth_source,
+            DefaultServerParameterProvider::default(),
+        ));
         Self {
-            handler: Arc::new(GitbaseHandler::new(pool)),
+            handler: Arc::new(GitbaseHandler::new(pool, repo_roots, blob_config)),
+            startup_handler,
         }
     }
 }
@@ -171,7 +223,26 @@ impl PgWireServerHandlers for GitbaseServerFactory {
         self.handler.clone()
     }
 
-    fn startup_handler(&self) -> Arc<impl pgwire::api::auth::StartupHandler> {
-        self.handler.clone()
+    fn startup_handler(&self) -> Arc<impl StartupHandler> {
+        self.startup_handler.clone()
+    }
+}
+
+#[derive(Debug, Clone)]
+struct GitbaseAuthSource {
+    user: String,
+    password: String,
+}
+
+#[async_trait]
+impl AuthSource for GitbaseAuthSource {
+    async fn get_password(&self, login: &LoginInfo) -> PgWireResult<Password> {
+        if login.user() == Some(self.user.as_str()) {
+            Ok(Password::new(None, self.password.as_bytes().to_vec()))
+        } else {
+            Err(PgWireError::InvalidPassword(
+                login.user().unwrap_or_default().to_string(),
+            ))
+        }
     }
 }

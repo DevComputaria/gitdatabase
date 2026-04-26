@@ -7,6 +7,7 @@ edition.workspace = true
 anyhow.workspace = true
 async-trait.workspace = true
 futures.workspace = true
+gitbase-loader = { path = "../gitbase-loader" }
 pgwire.workspace = true
 sqlx.workspace = true
 tokio.workspace = true

@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 
 use anyhow::{anyhow, Result};
 use gix::{ObjectId, Repository};
+use gix::odb::HeaderExt;
 use sha1::{Digest, Sha1};
 use tracing::debug;
 use walkdir::WalkDir;
@@ -62,6 +63,13 @@ pub struct CommitSnapshot {
     pub files: Vec<FileMetadata>,
 }
 
+#[derive(Debug, Clone)]
+pub struct BlobReadResult {
+    pub size: u64,
+    pub is_binary: bool,
+    pub content: Option<Vec<u8>>,
+}
+
 pub fn discover_repositories(roots: &[PathBuf]) -> Result<Vec<DiscoveredRepository>> {
     let mut repos = Vec::new();
     let mut seen = HashSet::new();
@@ -109,6 +117,51 @@ pub fn discover_repositories(roots: &[PathBuf]) -> Result<Vec<DiscoveredReposito
 pub fn open_repository(repo: &DiscoveredRepository) -> Result<Repository> {
     let repository = gix::open(&repo.git_dir)?;
     Ok(repository)
+}
+
+pub fn open_repository_from_path(path: &Path) -> Result<Repository> {
+    let git_dir = if path.join(".git").is_dir() {
+        path.join(".git")
+    } else {
+        path.to_path_buf()
+    };
+    Ok(gix::open(git_dir)?)
+}
+
+pub fn read_blob(repo: &Repository, blob_hash: &str, max_bytes: u64) -> Result<BlobReadResult> {
+    let oid = ObjectId::from_hex(blob_hash.as_bytes())?;
+    let header = repo.objects.header(oid.as_ref())?;
+    if header.kind() != gix::objs::Kind::Blob {
+        return Err(anyhow!("object {blob_hash} is not a blob"));
+    }
+
+    let size = header.size();
+    if size > max_bytes {
+        return Ok(BlobReadResult {
+            size,
+            is_binary: false,
+            content: None,
+        });
+    }
+
+    let object = repo.find_object(oid)?;
+    let blob = object.into_blob();
+    let data = blob.data.clone();
+    let is_binary = is_binary_blob(&data);
+
+    Ok(BlobReadResult {
+        size,
+        is_binary,
+        content: if is_binary { None } else { Some(data) },
+    })
+}
+
+fn is_binary_blob(data: &[u8]) -> bool {
+    let sample_len = data.len().min(8000);
+    if data[..sample_len].iter().any(|byte| *byte == 0) {
+        return true;
+    }
+    std::str::from_utf8(data).is_err()
 }
 
 pub fn collect_refs(repo: &Repository) -> Result<Vec<ReferenceMetadata>> {
