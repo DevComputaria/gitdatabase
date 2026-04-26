@@ -1,7 +1,7 @@
 use std::fs;
 
 use anyhow::Result;
-use git2::{IndexAddOption, Repository, Signature};
+use git2::{Repository, Signature};
 use gitbase_db::connect;
 use gitbase_loader::sync_repositories;
 use sqlx::PgPool;
@@ -44,7 +44,7 @@ async fn sync_ingests_basic_metadata() -> Result<()> {
     let pool = connect(&database_url, 5).await?;
     clear_tables(&pool).await?;
 
-    let report = sync_repositories(&pool, &[repo_path.clone()]).await?;
+    let report = sync_repositories(&pool, std::slice::from_ref(&repo_path)).await?;
 
     assert!(report.repositories >= 1);
     assert!(report.refs >= 1);
