@@ -3,6 +3,10 @@ site_description: Documentação oficial do GitDatabase
 site_url: https://devcomputaria.github.io/gitdatabase/
 repo_url: https://github.com/DevComputaria/gitdatabase
 repo_name: DevComputaria/gitdatabase
+copyright: Made DevComputaria with MkDocs
+
+extra:
+  generator: false
 
 docs_dir: docs
 
