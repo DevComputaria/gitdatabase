@@ -1,0 +1,968 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentação oficial do GitDatabase">
+      
+      
+      
+        <link rel="canonical" href="https://devcomputaria.github.io/gitdatabase/architecture/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../database/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Arquitetura - GitDatabase</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#arquitetura" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="GitDatabase" class="md-header__button md-logo" aria-label="GitDatabase" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            GitDatabase
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Arquitetura
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/DevComputaria/gitdatabase" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DevComputaria/gitdatabase
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Início
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Arquitetura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../database/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Banco de dados
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../pilot/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Pilot
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../runbook/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Runbook
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="GitDatabase" class="md-nav__button md-logo" aria-label="GitDatabase" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    GitDatabase
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/DevComputaria/gitdatabase" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DevComputaria/gitdatabase
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#workspace-e-crates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workspace e crates
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comandos-da-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comandos da CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fluxo-de-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo de dados
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#detalhes-de-implementacao-relevantes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detalhes de implementação relevantes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Detalhes de implementação relevantes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-descoberta-e-leitura-git-gitbase-git" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1) Descoberta e leitura Git (gitbase-git)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sincronizacao-gitbase-loadersync_repositories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2) Sincronização (gitbase-loader::sync_repositories)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-hidratacao-de-blobs-hydrate_blobs-hydrate_missing_blobs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3) Hidratação de blobs (hydrate_blobs / hydrate_missing_blobs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-indexacao-de-busca-index_search" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4) Indexação de busca (index_search)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-indexacao-uast-index_uast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5) Indexação UAST (index_uast)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-consulta-via-pgwire-gitbase-pgwire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6) Consulta via pgwire (gitbase-pgwire)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variaveis-de-ambiente-mais-usadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variáveis de ambiente mais usadas
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../database/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Banco de dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pilot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pilot
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../runbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#workspace-e-crates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workspace e crates
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comandos-da-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comandos da CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fluxo-de-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo de dados
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#detalhes-de-implementacao-relevantes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detalhes de implementação relevantes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Detalhes de implementação relevantes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-descoberta-e-leitura-git-gitbase-git" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1) Descoberta e leitura Git (gitbase-git)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sincronizacao-gitbase-loadersync_repositories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2) Sincronização (gitbase-loader::sync_repositories)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-hidratacao-de-blobs-hydrate_blobs-hydrate_missing_blobs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3) Hidratação de blobs (hydrate_blobs / hydrate_missing_blobs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-indexacao-de-busca-index_search" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4) Indexação de busca (index_search)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-indexacao-uast-index_uast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5) Indexação UAST (index_uast)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-consulta-via-pgwire-gitbase-pgwire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6) Consulta via pgwire (gitbase-pgwire)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variaveis-de-ambiente-mais-usadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variáveis de ambiente mais usadas
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="arquitetura">Arquitetura<a class="headerlink" href="#arquitetura" title="Permanent link">&para;</a></h1>
+<p>Esta página descreve a arquitetura implementada no código atual do GitDatabase.</p>
+<h2 id="workspace-e-crates">Workspace e crates<a class="headerlink" href="#workspace-e-crates" title="Permanent link">&para;</a></h2>
+<p>O projeto é um workspace Rust com os seguintes crates:</p>
+<ul>
+<li><code>gitbase-cli</code>: interface de linha de comando e orquestração dos fluxos</li>
+<li><code>gitbase-db</code>: conexão com PostgreSQL, migrações e acesso a dados</li>
+<li><code>gitbase-git</code>: leitura de repositórios Git com <code>gix</code></li>
+<li><code>gitbase-loader</code>: pipeline de ingestão/indexação</li>
+<li><code>gitbase-uast</code>: parsing semântico (Go/Rust) via tree-sitter</li>
+<li><code>gitbase-pgwire</code>: servidor compatível com protocolo PostgreSQL</li>
+</ul>
+<h2 id="comandos-da-cli">Comandos da CLI<a class="headerlink" href="#comandos-da-cli" title="Permanent link">&para;</a></h2>
+<p>Comandos disponíveis em <code>gitbase-cli</code>:</p>
+<ul>
+<li><code>serve</code>: sobe servidor pgwire</li>
+<li><code>sync</code>: sincroniza metadados Git</li>
+<li><code>health</code>: checa conectividade e migrações</li>
+<li><code>hydrate-blobs</code>: hidrata conteúdo textual dos blobs</li>
+<li><code>search-index</code>: monta/atualiza índice de busca textual</li>
+<li><code>uast</code>: gera cache/projeções de UAST</li>
+</ul>
+<h2 id="fluxo-de-dados">Fluxo de dados<a class="headerlink" href="#fluxo-de-dados" title="Permanent link">&para;</a></h2>
+<pre><code class="language-text">Repositórios Git
+   ↓ (gitbase-git)
+Metadados (repos/refs/commits/tree/files)
+   ↓ (gitbase-loader + gitbase-db)
+PostgreSQL (schema gitbase)
+   ↓
+Blobs hidratados + índice de busca + UAST
+   ↓
+Consultas SQL / pgwire
+</code></pre>
+<h2 id="detalhes-de-implementacao-relevantes">Detalhes de implementação relevantes<a class="headerlink" href="#detalhes-de-implementacao-relevantes" title="Permanent link">&para;</a></h2>
+<h3 id="1-descoberta-e-leitura-git-gitbase-git">1) Descoberta e leitura Git (<code>gitbase-git</code>)<a class="headerlink" href="#1-descoberta-e-leitura-git-gitbase-git" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Usa <code>gix</code> para abrir repositórios e caminhar histórico</li>
+<li>Suporta roots com <code>.git/</code> e repositórios bare</li>
+<li>Gera snapshots de commit contendo:</li>
+<li>metadados do commit</li>
+<li>entradas de árvore</li>
+<li>arquivos por commit</li>
+<li>Classifica blobs binários por NUL byte e validação UTF-8</li>
+</ul>
+<h3 id="2-sincronizacao-gitbase-loadersync_repositories">2) Sincronização (<code>gitbase-loader::sync_repositories</code>)<a class="headerlink" href="#2-sincronizacao-gitbase-loadersync_repositories" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Faz upsert em:</li>
+<li><code>repositories</code></li>
+<li><code>refs</code></li>
+<li><code>commits</code></li>
+<li><code>commit_parents</code></li>
+<li><code>tree_entries</code></li>
+<li><code>files</code></li>
+<li>Evita retrabalho para commits já persistidos</li>
+</ul>
+<h3 id="3-hidratacao-de-blobs-hydrate_blobs-hydrate_missing_blobs">3) Hidratação de blobs (<code>hydrate_blobs</code> / <code>hydrate_missing_blobs</code>)<a class="headerlink" href="#3-hidratacao-de-blobs-hydrate_blobs-hydrate_missing_blobs" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Busca blobs faltantes no banco</li>
+<li>Lê blob no Git de origem</li>
+<li>Regras:</li>
+<li>blob maior que <code>max_blob_bytes</code> → marca sem conteúdo</li>
+<li>blob binário → marca sem conteúdo</li>
+<li>blob textual válido → persiste <code>content</code></li>
+</ul>
+<h3 id="4-indexacao-de-busca-index_search">4) Indexação de busca (<code>index_search</code>)<a class="headerlink" href="#4-indexacao-de-busca-index_search" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Candidatos vêm de <code>files</code> + <code>blobs</code></li>
+<li>Só indexa conteúdo textual UTF-8</li>
+<li>Normaliza NUL (<code>\0</code>) para espaço</li>
+<li>Persiste <code>tsvector</code> em <code>code_index</code></li>
+</ul>
+<h3 id="5-indexacao-uast-index_uast">5) Indexação UAST (<code>index_uast</code>)<a class="headerlink" href="#5-indexacao-uast-index_uast" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Suporta linguagens detectadas por extensão:</li>
+<li><code>.go</code></li>
+<li><code>.rs</code></li>
+<li>Armazena documento UAST em JSONB (<code>uast_cache</code>)</li>
+<li>Projeta funções e imports em tabelas específicas</li>
+</ul>
+<h3 id="6-consulta-via-pgwire-gitbase-pgwire">6) Consulta via pgwire (<code>gitbase-pgwire</code>)<a class="headerlink" href="#6-consulta-via-pgwire-gitbase-pgwire" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Server escuta em <code>bind</code> (default <code>0.0.0.0:5433</code>)</li>
+<li>Autenticação simples por usuário/senha configuráveis</li>
+<li>Encaminha queries para PostgreSQL real (<code>sqlx</code>)</li>
+<li>Em consultas <code>SELECT</code>, tenta hidratar blobs referenciados por <code>blob_hash</code> antes de executar</li>
+</ul>
+<h2 id="variaveis-de-ambiente-mais-usadas">Variáveis de ambiente mais usadas<a class="headerlink" href="#variaveis-de-ambiente-mais-usadas" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>DATABASE_URL</code></li>
+<li><code>GITBASE_REPO_ROOTS</code></li>
+<li><code>GITBASE_DB_MAX_CONNECTIONS</code></li>
+<li><code>GITBASE_BLOB_MAX_BYTES</code></li>
+<li><code>GITBASE_BLOB_HYDRATE_LIMIT</code></li>
+<li><code>GITBASE_SEARCH_LIMIT</code></li>
+<li><code>GITBASE_UAST_LIMIT</code></li>
+<li><code>GITBASE_BIND_ADDR</code></li>
+<li><code>GITBASE_PG_USER</code></li>
+<li><code>GITBASE_PG_PASSWORD</code></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar para o topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Made DevComputaria with MkDocs
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.top", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
