@@ -1,7 +1,7 @@
 use std::fs;
 
 use anyhow::Result;
-use git2::{IndexAddOption, Repository, Signature};
+use git2::{Repository, Signature};
 use gitbase_db::connect;
 use gitbase_loader::{
     hydrate_blobs, index_search, sync_repositories, BlobHydrationConfig, SearchIndexConfig,

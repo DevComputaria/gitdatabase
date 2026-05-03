@@ -177,7 +177,7 @@ pub fn collect_refs(repo: &Repository) -> Result<Vec<ReferenceMetadata>> {
             .map(|id| id.to_string())
             .or_else(|| {
                 reference
-                    .peel_to_id_in_place()
+                    .peel_to_id()
                     .ok()
                     .map(|id| id.to_string())
             })
@@ -211,7 +211,7 @@ pub fn collect_commits(repo: &Repository, ref_targets: &[String]) -> Result<Vec<
         let oid = ObjectId::from_hex(target.as_bytes())?;
         let revwalk = repo
             .rev_walk([oid])
-            .sorting(gix::traverse::commit::simple::Sorting::BreadthFirst)
+            .sorting(gix::revision::walk::Sorting::BreadthFirst)
             .all()?;
 
         for info in revwalk {
@@ -231,10 +231,16 @@ pub fn collect_commits(repo: &Repository, ref_targets: &[String]) -> Result<Vec<
                 .map(|id| id.to_string())
                 .collect::<Vec<_>>();
 
-            let author_name = Some(commit.author().name.to_string());
-            let author_email = Some(commit.author().email.to_string());
-            let committer_name = Some(commit.committer().name.to_string());
-            let committer_email = Some(commit.committer().email.to_string());
+            let author_name = commit.author().ok().map(|author| author.name.to_string());
+            let author_email = commit.author().ok().map(|author| author.email.to_string());
+            let committer_name = commit
+                .committer()
+                .ok()
+                .map(|committer| committer.name.to_string());
+            let committer_email = commit
+                .committer()
+                .ok()
+                .map(|committer| committer.email.to_string());
 
             let message = {
                 let msg = commit.message();
@@ -246,7 +252,7 @@ pub fn collect_commits(repo: &Repository, ref_targets: &[String]) -> Result<Vec<
                 }
             };
 
-            let committed_at_seconds = Some(commit.time().seconds);
+            let committed_at_seconds = commit.time().ok().map(|time| time.seconds);
 
             let mut tree_entries = Vec::new();
             let mut files = Vec::new();
@@ -346,7 +352,7 @@ fn build_repo_entry(path: &Path) -> Result<Option<DiscoveredRepository>> {
     };
 
     let repo = gix::open(&git_dir)?;
-    let is_bare = repo.work_dir().is_none();
+    let is_bare = repo.workdir().is_none();
     let name = path
         .file_name()
         .and_then(|name| name.to_str())

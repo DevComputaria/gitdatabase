@@ -18,7 +18,7 @@ rust-version = "1.80"
 anyhow = "1"
 async-trait = "0.1"
 clap = { version = "4", features = ["derive", "env"] }
-gix = "0.66"
+gix = "0.83"
 pgwire = "0.38"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
