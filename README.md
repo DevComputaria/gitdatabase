@@ -225,6 +225,30 @@ LIMIT 1;
 
 ---
 
+## Documentação (MkDocs)
+
+Este repositório possui documentação versionada em `docs/` com publicação automática para `gh-pages` via GitHub Actions.
+
+### Rodar localmente
+
+```bash
+python -m pip install --upgrade pip
+pip install mkdocs mkdocs-material
+mkdocs serve
+```
+
+Depois acesse `http://127.0.0.1:8000`.
+
+### Publicação automática
+
+- Workflow: `.github/workflows/docs-gh-pages.yml`
+- Dispara em push para `main` quando houver alterações em `docs/**` ou `mkdocs.yml`
+- Publica no branch `gh-pages` usando `mkdocs gh-deploy`
+
+> Se for a primeira publicação, confirme em **Settings → Pages** que o site usa o branch `gh-pages`.
+
+---
+
 ## Licença
 
 Consulte o arquivo de licença do projeto (se aplicável).

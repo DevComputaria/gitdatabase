@@ -1,46 +1,87 @@
-# Gitbase v2 Pilot Guide
+# Pilot Guide
 
-This guide describes the pilot workflow for loading repositories, indexing code search, and validating the results.
+Este guia mostra um fluxo de validação ponta a ponta do GitDatabase com os comandos existentes no código atual.
 
-## Prerequisites
+## Pré-requisitos
 
-- PostgreSQL 16 with `pg_trgm` enabled
-- Rust toolchain 1.80+ or the provided runtime Docker image
-- A directory with Git repositories to index
+- PostgreSQL 16+
+- Rust 1.80+
+- Repositórios Git para indexar
 
-## Quick start (local)
+> O `pg_trgm` é habilitado automaticamente pelas migrations executadas na conexão.
 
-1. Configure environment variables (copy `.env.example` to `.env` and adjust).
-2. Start PostgreSQL and apply migrations by running any gitbase command (they auto-apply).
-3. Sync repositories:
+## Variáveis de ambiente
 
-```
-./target/release/gitbase sync --repo-roots /path/to/repos --database-url "$DATABASE_URL"
-```
+Exemplo:
 
-4. (Optional) Hydrate blobs by running a query through the pgwire server or using your workload.
-5. Build search index:
-
-```
-./target/release/gitbase search-index --database-url "$DATABASE_URL"
+```bash
+export DATABASE_URL="postgres://gitbase:gitbase@127.0.0.1:5433/gitbase"
+export GITBASE_REPO_ROOTS="/path/to/repos"
 ```
 
-6. Build UAST cache and projections:
+## Fluxo recomendado
 
-```
-./target/release/gitbase uast --database-url "$DATABASE_URL"
+### 1) Health check + migrations
+
+```bash
+cargo run -p gitbase-cli -- health --database-url "$DATABASE_URL"
 ```
 
-7. Run a search query:
+### 2) Sincronizar metadados Git
 
+```bash
+cargo run -p gitbase-cli -- sync \
+	--database-url "$DATABASE_URL" \
+	--repo-roots /path/to/repos
 ```
-SELECT *
+
+### 3) Hidratar blobs faltantes
+
+```bash
+cargo run -p gitbase-cli -- hydrate-blobs \
+	--database-url "$DATABASE_URL" \
+	--repo-roots /path/to/repos \
+	--blob-max-bytes 1000000
+```
+
+### 4) Montar índice de busca
+
+```bash
+cargo run -p gitbase-cli -- search-index \
+	--database-url "$DATABASE_URL"
+```
+
+### 5) Montar UAST (opcional)
+
+```bash
+cargo run -p gitbase-cli -- uast \
+	--database-url "$DATABASE_URL"
+```
+
+### 6) Validar busca SQL
+
+```sql
+SELECT repository_id, path, language, score
 FROM gitbase.search_code('http client', NULL)
 LIMIT 20;
 ```
 
-## Notes
+## Validação por contagem
 
-- Incremental sync skips commits already present in the catalog to avoid reprocessing.
-- Search index only includes non-binary blobs that have been hydrated.
-- Use `GITBASE_SEARCH_LIMIT` and `GITBASE_UAST_LIMIT` to cap indexing work during the pilot.
+```sql
+SELECT COUNT(*) FROM gitbase.repositories;
+SELECT COUNT(*) FROM gitbase.commits;
+SELECT COUNT(*) FROM gitbase.files;
+SELECT COUNT(*) FROM gitbase.blobs WHERE content IS NOT NULL;
+SELECT COUNT(*) FROM gitbase.code_index;
+```
+
+## Observações importantes
+
+- `sync` é incremental para commits já conhecidos.
+- `search-index` só indexa blobs com conteúdo textual UTF-8.
+- `uast` atualmente cobre arquivos Go (`.go`) e Rust (`.rs`).
+- Use limites no piloto para controlar carga:
+	- `--limit` em `search-index`
+	- `--limit` em `uast`
+	- `--limit` em `hydrate-blobs`

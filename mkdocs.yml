@@ -1,0 +1,27 @@
+site_name: GitDatabase
+site_description: Documentação oficial do GitDatabase
+site_url: https://devcomputaria.github.io/gitdatabase/
+repo_url: https://github.com/DevComputaria/gitdatabase
+repo_name: DevComputaria/gitdatabase
+
+docs_dir: docs
+
+theme:
+  name: material
+  language: pt-BR
+  features:
+    - navigation.tabs
+    - navigation.top
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+
+nav:
+  - Início: index.md
+  - Arquitetura: architecture.md
+  - Banco de dados: database.md
+  - Pilot: pilot.md
+  - Runbook: runbook.md
