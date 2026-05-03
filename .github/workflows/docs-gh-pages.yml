@@ -20,6 +20,8 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      NO_MKDOCS_2_WARNING: "1"
 
     steps:
       - name: Checkout

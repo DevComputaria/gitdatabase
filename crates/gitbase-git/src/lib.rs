@@ -175,12 +175,7 @@ pub fn collect_refs(repo: &Repository) -> Result<Vec<ReferenceMetadata>> {
             .target()
             .try_id()
             .map(|id| id.to_string())
-            .or_else(|| {
-                reference
-                    .peel_to_id()
-                    .ok()
-                    .map(|id| id.to_string())
-            })
+            .or_else(|| reference.peel_to_id().ok().map(|id| id.to_string()))
             .ok_or_else(|| anyhow!("reference {name} has no target"))?;
 
         let kind = if name.starts_with("refs/heads/") {
