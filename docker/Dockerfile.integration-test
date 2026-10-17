@@ -1,0 +1,36 @@
+# syntax=docker/dockerfile:1
+
+# Cargo.lock includes crates that require Rust 1.89 (for example, pgwire 0.38.3).
+FROM rust:1.89-bookworm AS builder
+
+WORKDIR /app
+
+COPY Cargo.toml Cargo.lock ./
+COPY crates ./crates
+COPY migrations ./migrations
+
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/usr/local/cargo/git \
+    --mount=type=tmpfs,target=/app/target,size=4294967296 \
+    --mount=type=secret,id=ca_bundle,required=false \
+    if [ -f /run/secrets/ca_bundle ]; then \
+        CARGO_HTTP_CAINFO=/run/secrets/ca_bundle \
+            cargo build --locked --release -p gitbase-cli; \
+    else \
+        cargo build --locked --release -p gitbase-cli; \
+    fi \
+    && cp /app/target/release/gitbase /tmp/gitbase
+
+FROM debian:bookworm-slim
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        git \
+        postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /tmp/gitbase /usr/local/bin/gitbase
+COPY docker/run-container-integration-test.sh /usr/local/bin/run-container-integration-test
+
+ENTRYPOINT ["/usr/local/bin/run-container-integration-test"]

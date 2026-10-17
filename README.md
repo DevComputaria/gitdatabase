@@ -225,6 +225,29 @@ LIMIT 1;
 
 ---
 
+## Teste de integração em containers
+
+O teste de integração sobe um PostgreSQL isolado, clona
+`DevComputaria/DevComputaria.Prompting`, executa `sync`, `hydrate-blobs` e
+`search-index`, e valida o resultado com consultas SQL.
+
+```bash
+mkdir -p test-results
+docker compose -f docker/docker-compose.integration-test.yml up \
+  --build \
+  --abort-on-container-exit \
+  --exit-code-from integration-test \
+  integration-test
+docker compose -f docker/docker-compose.integration-test.yml down --volumes
+```
+
+O resultado detalhado é exibido no console e gravado em
+`test-results/container-integration-test.md`. O workflow
+`Container integration test` também publica esse relatório no Job Summary e
+como artefato da execução.
+
+---
+
 ## Documentação (MkDocs)
 
 Este repositório possui documentação versionada em `docs/` com publicação automática para `gh-pages` via GitHub Actions.
