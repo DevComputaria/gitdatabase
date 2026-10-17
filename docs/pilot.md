@@ -5,7 +5,7 @@ Este guia mostra um fluxo de validação ponta a ponta do GitDatabase com os com
 ## Pré-requisitos
 
 - PostgreSQL 16+
-- Rust 1.80+
+- Rust 1.89 para o `Cargo.lock` atual
 - Repositórios Git para indexar
 
 > O `pg_trgm` é habilitado automaticamente pelas migrations executadas na conexão.
@@ -76,6 +76,27 @@ SELECT COUNT(*) FROM gitbase.blobs WHERE content IS NOT NULL;
 SELECT COUNT(*) FROM gitbase.code_index;
 ```
 
+## Validação automatizada em containers
+
+O cenário mantido pela CI clona `DevComputaria/DevComputaria.Prompting`, executa
+o pipeline e aplica asserções SQL:
+
+```bash
+mkdir -p test-results
+docker compose -f docker/docker-compose.integration-test.yml up \
+  --build \
+  --abort-on-container-exit \
+  --exit-code-from integration-test \
+  integration-test
+```
+
+O relatório fica em `test-results/container-integration-test.md`. Finalize com:
+
+```bash
+docker compose -f docker/docker-compose.integration-test.yml down \
+  --volumes --remove-orphans
+```
+
 ## Observações importantes
 
 - `sync` é incremental para commits já conhecidos.
@@ -85,3 +106,6 @@ SELECT COUNT(*) FROM gitbase.code_index;
 	- `--limit` em `search-index`
 	- `--limit` em `uast`
 	- `--limit` em `hydrate-blobs`
+- O requisito Rust 1.89 reflete as dependências travadas atuais, apesar de o
+  manifest e o Dockerfile principal ainda declararem 1.80; o alinhamento está
+  planejado como GD-001.

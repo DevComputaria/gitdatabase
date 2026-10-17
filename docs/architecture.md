@@ -2,6 +2,31 @@
 
 Esta página descreve a arquitetura implementada no código atual do GitDatabase.
 
+## Como ler esta documentação
+
+- [Contexto e componentes](./architecture/system-context.md): fronteiras,
+  processos, crates, topologias e segurança
+- [Pipelines e consistência](./architecture/data-pipelines.md): ciclo de vida dos
+  dados, idempotência e recuperação
+- [Atributos de qualidade](./architecture/quality-attributes.md): riscos de
+  produção, capacidade, segurança e estratégia de testes
+- [Banco de dados](./database.md): modelo relacional, índices e consultas
+- [Plano de funcionalidades](./roadmap.md): lacunas priorizadas e critérios de
+  aceite
+
+## Princípios implementados
+
+1. **PostgreSQL como plataforma de dados:** persistência, busca e consultas usam
+   capacidades nativas do banco.
+2. **Conteúdo endereçado por hash:** blobs, índice textual e UAST são
+   deduplicados por SHA-1 do objeto Git.
+3. **Ingestão em estágios:** metadata, conteúdo, busca e semântica podem evoluir
+   e ser reexecutados separadamente.
+4. **Git permanece fonte de verdade:** o banco é uma projeção consultável; a
+   hidratação ainda depende dos objetos locais.
+5. **Limites antes de parsing:** tamanho, binário e UTF-8 protegem os estágios de
+   conteúdo.
+
 ## Workspace e crates
 
 O projeto é um workspace Rust com os seguintes crates:
@@ -37,6 +62,10 @@ Blobs hidratados + índice de busca + UAST
    ↓
 Consultas SQL / pgwire
 ```
+
+O pipeline é eventualmente consistente: concluir `sync` não implica que blobs,
+busca ou UAST estejam atualizados. Consulte a
+[matriz de reexecução](./architecture/data-pipelines.md#matriz-de-reexecucao).
 
 ## Detalhes de implementação relevantes
 
@@ -92,6 +121,28 @@ Consultas SQL / pgwire
 - Encaminha queries para PostgreSQL real (`sqlx`)
 - Em consultas `SELECT`, tenta hidratar blobs referenciados por `blob_hash` antes de executar
 
+## Invariantes e limites
+
+- `repositories.path` é único e também participa indiretamente da identidade do
+  repositório.
+- commits, files e tree entries pertencem a um repositório lógico, mas essa
+  relação ainda não é protegida por foreign keys.
+- `files` representa ocorrências por commit; não é uma visão apenas do HEAD.
+- `blobs`, `code_index` e `uast_cache` são globais por hash.
+- uma linha em `blobs` com `content IS NULL` pode representar binário, objeto
+  acima do limite ou hidratação ainda pendente.
+- a implementação atual não reconcilia deleções e force-pushes.
+- o listener pgwire usa autenticação cleartext e deve permanecer em rede
+  protegida.
+
+## Decisões que ainda precisam de ADR
+
+- identidade estável do repositório: path, remote URL ou UUID;
+- retenção de histórico após refs deixarem de alcançar commits;
+- atomicidade por commit versus por repositório;
+- versionamento e invalidação dos caches search/UAST;
+- exposição do pgwire como gateway administrativo ou somente leitura.
+
 ## Variáveis de ambiente mais usadas
 
 - `DATABASE_URL`
@@ -104,3 +155,11 @@ Consultas SQL / pgwire
 - `GITBASE_BIND_ADDR`
 - `GITBASE_PG_USER`
 - `GITBASE_PG_PASSWORD`
+
+## Estado de maturidade
+
+O projeto implementa um pipeline funcional e possui testes unitários, integração
+com PostgreSQL e um cenário E2E em containers. Antes de produção multiusuário,
+as prioridades são consistência transacional, reconciliação, integridade
+referencial, alinhamento do toolchain e endurecimento do pgwire. A ordem proposta
+está no [roadmap](./roadmap.md).

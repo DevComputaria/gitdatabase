@@ -252,6 +252,16 @@ como artefato da execução.
 
 Este repositório possui documentação versionada em `docs/` com publicação automática para `gh-pages` via GitHub Actions.
 
+Conteúdo técnico principal:
+
+- [Visão geral de arquitetura](docs/architecture.md)
+- [Contexto e componentes](docs/architecture/system-context.md)
+- [Pipelines e consistência](docs/architecture/data-pipelines.md)
+- [Atributos de qualidade](docs/architecture/quality-attributes.md)
+- [Modelo de dados](docs/database.md)
+- [Plano de funcionalidades ausentes](docs/roadmap.md)
+- [Changelog](CHANGELOG.md)
+
 ### Rodar localmente
 
 ```bash
