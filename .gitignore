@@ -22,3 +22,6 @@ target
 
 # Container integration test output
 /test-results/
+
+# MkDocs local build output
+/site/

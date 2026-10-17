@@ -25,7 +25,12 @@ markdown_extensions:
 
 nav:
   - Início: index.md
-  - Arquitetura: architecture.md
+  - Arquitetura:
+      - Visão geral: architecture.md
+      - Contexto e componentes: architecture/system-context.md
+      - Pipelines e consistência: architecture/data-pipelines.md
+      - Atributos de qualidade: architecture/quality-attributes.md
   - Banco de dados: database.md
   - Pilot: pilot.md
   - Runbook: runbook.md
+  - Roadmap: roadmap.md
