@@ -1,0 +1,1499 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentação oficial do GitDatabase">
+      
+      
+      
+        <link rel="canonical" href="https://devcomputaria.github.io/gitdatabase/roadmap/">
+      
+      
+        <link rel="prev" href="../runbook/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Roadmap - GitDatabase</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#plano-de-funcionalidades-ausentes" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="GitDatabase" class="md-header__button md-logo" aria-label="GitDatabase" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            GitDatabase
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Roadmap
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/DevComputaria/gitdatabase" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DevComputaria/gitdatabase
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Início
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../architecture/" class="md-tabs__link">
+          
+  
+  
+  Arquitetura
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../database/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Banco de dados
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../pilot/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Pilot
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../runbook/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Runbook
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Roadmap
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="GitDatabase" class="md-nav__button md-logo" aria-label="GitDatabase" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    GitDatabase
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/DevComputaria/gitdatabase" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DevComputaria/gitdatabase
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Arquitetura
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/system-context/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contexto e componentes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/data-pipelines/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipelines e consistência
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/quality-attributes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Atributos de qualidade
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../database/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Banco de dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pilot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pilot
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../runbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#principios-de-priorizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Princípios de priorização
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sequencia-recomendada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sequência recomendada
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#p0-fundacao-de-correcao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P0 — Fundação de correção
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="P0 — Fundação de correção">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gd-001-alinhar-toolchain-e-build-de-producao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-001 — Alinhar toolchain e build de produção
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gd-002-classificacao-de-arquivo-e-linguagem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-002 — Classificação de arquivo e linguagem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gd-003-sync-transacional-reparavel-e-auditavel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-003 — Sync transacional, reparável e auditável
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gd-004-reconciliacao-e-integridade-referencial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-004 — Reconciliação e integridade referencial
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#p1-operacao-como-plataforma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P1 — Operação como plataforma
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="P1 — Operação como plataforma">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gd-005-cadastro-e-atualizacao-de-repositorios-remotos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-005 — Cadastro e atualização de repositórios remotos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gd-006-agendamento-fila-e-concorrencia-controlada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-006 — Agendamento, fila e concorrência controlada
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gd-007-observabilidade-operacional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-007 — Observabilidade operacional
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gd-008-busca-por-snapshot-e-resultados-nao-duplicados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-008 — Busca por snapshot e resultados não duplicados
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#p2-expansao-semantica-e-protocolo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P2 — Expansão semântica e protocolo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="P2 — Expansão semântica e protocolo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gd-009-uast-versionada-e-multilingue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-009 — UAST versionada e multilíngue
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gd-010-endurecimento-do-pgwire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-010 — Endurecimento do pgwire
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gd-011-retencao-privacidade-e-exclusao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-011 — Retenção, privacidade e exclusão
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#primeiro-incremento-recomendado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primeiro incremento recomendado
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Primeiro incremento recomendado">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#entregaveis-do-ciclo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entregáveis do ciclo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#definicao-de-pronto-comum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Definição de pronto comum
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#principios-de-priorizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Princípios de priorização
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sequencia-recomendada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sequência recomendada
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#p0-fundacao-de-correcao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P0 — Fundação de correção
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="P0 — Fundação de correção">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gd-001-alinhar-toolchain-e-build-de-producao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-001 — Alinhar toolchain e build de produção
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gd-002-classificacao-de-arquivo-e-linguagem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-002 — Classificação de arquivo e linguagem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gd-003-sync-transacional-reparavel-e-auditavel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-003 — Sync transacional, reparável e auditável
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gd-004-reconciliacao-e-integridade-referencial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-004 — Reconciliação e integridade referencial
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#p1-operacao-como-plataforma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P1 — Operação como plataforma
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="P1 — Operação como plataforma">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gd-005-cadastro-e-atualizacao-de-repositorios-remotos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-005 — Cadastro e atualização de repositórios remotos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gd-006-agendamento-fila-e-concorrencia-controlada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-006 — Agendamento, fila e concorrência controlada
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gd-007-observabilidade-operacional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-007 — Observabilidade operacional
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gd-008-busca-por-snapshot-e-resultados-nao-duplicados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-008 — Busca por snapshot e resultados não duplicados
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#p2-expansao-semantica-e-protocolo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P2 — Expansão semântica e protocolo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="P2 — Expansão semântica e protocolo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gd-009-uast-versionada-e-multilingue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-009 — UAST versionada e multilíngue
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gd-010-endurecimento-do-pgwire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-010 — Endurecimento do pgwire
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gd-011-retencao-privacidade-e-exclusao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GD-011 — Retenção, privacidade e exclusão
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#primeiro-incremento-recomendado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primeiro incremento recomendado
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Primeiro incremento recomendado">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#entregaveis-do-ciclo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entregáveis do ciclo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#definicao-de-pronto-comum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Definição de pronto comum
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="plano-de-funcionalidades-ausentes">Plano de funcionalidades ausentes<a class="headerlink" href="#plano-de-funcionalidades-ausentes" title="Permanent link">&para;</a></h1>
+<p>Este plano foi derivado da implementação atual, das migrations, dos testes e dos
+workflows. Ele prioriza correção de dados antes de expansão funcional.</p>
+<h2 id="principios-de-priorizacao">Princípios de priorização<a class="headerlink" href="#principios-de-priorizacao" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>P0:</strong> impede corrupção, operação previsível ou build reproduzível;</li>
+<li><strong>P1:</strong> completa o ciclo operacional esperado por uma plataforma de indexação;</li>
+<li><strong>P2:</strong> amplia escala, protocolos e análise semântica;</li>
+<li>cada item deve entregar migration, código, testes, métricas e documentação;</li>
+<li>mudanças de schema ou cache precisam de estratégia de upgrade e rollback.</li>
+</ul>
+<h2 id="sequencia-recomendada">Sequência recomendada<a class="headerlink" href="#sequencia-recomendada" title="Permanent link">&para;</a></h2>
+<pre><code class="language-text">P0.1 Toolchain reproduzível
+        │
+        ├──▶ P0.2 Classificação de arquivos
+        │
+        └──▶ P0.3 Sync transacional e reparável
+                    │
+                    └──▶ P0.4 Reconciliação + integridade referencial
+                                  │
+                                  └──▶ P1.1 Gestão de remotos e jobs
+                                                │
+                                                ├──▶ P1.2 Observabilidade
+                                                └──▶ P1.3 Busca aprimorada
+</code></pre>
+<h2 id="p0-fundacao-de-correcao">P0 — Fundação de correção<a class="headerlink" href="#p0-fundacao-de-correcao" title="Permanent link">&para;</a></h2>
+<h3 id="gd-001-alinhar-toolchain-e-build-de-producao">GD-001 — Alinhar toolchain e build de produção<a class="headerlink" href="#gd-001-alinhar-toolchain-e-build-de-producao" title="Permanent link">&para;</a></h3>
+<p><strong>Problema:</strong> <code>rust-version</code> e o Dockerfile principal usam Rust 1.80, enquanto o
+<code>Cargo.lock</code> contém crates que exigem Rust 1.89.</p>
+<p><strong>Escopo:</strong></p>
+<ul>
+<li>definir uma única versão mínima suportada;</li>
+<li>atualizar <code>Cargo.toml</code>, Dockerfile, CI e documentação;</li>
+<li>usar <code>cargo build --locked</code> em imagens;</li>
+<li>adicionar job que compile explicitamente na MSRV;</li>
+<li>documentar política de atualização do lockfile.</li>
+</ul>
+<p><strong>Critérios de aceite:</strong></p>
+<ul>
+<li>build local, CI e imagem usam a mesma versão mínima;</li>
+<li><code>cargo test --workspace --locked</code> passa na MSRV;</li>
+<li>dependência que elevar MSRV falha de forma explícita na CI.</li>
+</ul>
+<p><strong>Tamanho:</strong> pequeno. <strong>Dependências:</strong> nenhuma.</p>
+<h3 id="gd-002-classificacao-de-arquivo-e-linguagem">GD-002 — Classificação de arquivo e linguagem<a class="headerlink" href="#gd-002-classificacao-de-arquivo-e-linguagem" title="Permanent link">&para;</a></h3>
+<p><strong>Problema:</strong> o tree walk grava <code>language = NULL</code>, <code>size = NULL</code> e
+<code>is_binary = false</code>. O índice só infere Go/Rust, tornando o filtro <code>lang</code>
+incompleto.</p>
+<p><strong>Escopo:</strong></p>
+<ul>
+<li>detector central baseado em extensão e nomes conhecidos;</li>
+<li>preencher linguagem e tamanho no sync quando disponíveis;</li>
+<li>consolidar a classificação binária após hidratação;</li>
+<li>suportar inicialmente C#, JavaScript/TypeScript, Python, Java, Go e Rust;</li>
+<li>backfill versionado para linhas existentes.</li>
+</ul>
+<p><strong>Critérios de aceite:</strong></p>
+<ul>
+<li>fixtures por linguagem alimentam <code>files.language</code> e <code>code_index.language</code>;</li>
+<li><code>search_code(pattern, lang)</code> retorna somente a linguagem solicitada;</li>
+<li>linguagens desconhecidas continuam válidas com <code>NULL</code>;</li>
+<li>relatório de sync apresenta contagem por classificação.</li>
+</ul>
+<p><strong>Tamanho:</strong> médio. <strong>Dependências:</strong> GD-001.</p>
+<h3 id="gd-003-sync-transacional-reparavel-e-auditavel">GD-003 — Sync transacional, reparável e auditável<a class="headerlink" href="#gd-003-sync-transacional-reparavel-e-auditavel" title="Permanent link">&para;</a></h3>
+<p><strong>Problema:</strong> statements são confirmados individualmente e commits existentes
+pulam a reconstrução de files/tree entries.</p>
+<p><strong>Escopo:</strong></p>
+<ul>
+<li>transação por repositório;</li>
+<li>staging ou marca de run antes da publicação;</li>
+<li>modo <code>--repair</code> para recalcular projeções de commits existentes;</li>
+<li>tabela de runs com status, versão e contadores;</li>
+<li>erro contextualizado por repositório/commit/path.</li>
+</ul>
+<p><strong>Critérios de aceite:</strong></p>
+<ul>
+<li>falha injetada no meio de um commit não deixa projeções parciais visíveis;</li>
+<li><code>--repair</code> restaura dados removidos intencionalmente em teste;</li>
+<li>duas execuções sem mudança são idempotentes;</li>
+<li>run final registra duração, totais e erro.</li>
+</ul>
+<p><strong>Tamanho:</strong> grande. <strong>Dependências:</strong> GD-001.</p>
+<h3 id="gd-004-reconciliacao-e-integridade-referencial">GD-004 — Reconciliação e integridade referencial<a class="headerlink" href="#gd-004-reconciliacao-e-integridade-referencial" title="Permanent link">&para;</a></h3>
+<p><strong>Problema:</strong> refs apagadas, force-pushes e repositórios removidos não são
+refletidos no banco; não há foreign keys.</p>
+<p><strong>Escopo:</strong></p>
+<ul>
+<li>reconciliar o conjunto atual de refs;</li>
+<li>definir política <code>preserve-history</code> versus <code>prune-unreachable</code>;</li>
+<li>adicionar foreign keys compostas e cascades revisadas;</li>
+<li>garbage collection de blobs, search e UAST sem referências;</li>
+<li>comando <code>doctor</code> para detectar órfãos e divergências.</li>
+</ul>
+<p><strong>Critérios de aceite:</strong></p>
+<ul>
+<li>teste com branch removida elimina ou preserva dados conforme a política;</li>
+<li>teste com force-push não mantém ref apontando para hash antigo;</li>
+<li>migrations validam dados existentes antes de criar constraints;</li>
+<li><code>doctor</code> retorna exit code não zero para inconsistências.</li>
+</ul>
+<p><strong>Tamanho:</strong> grande. <strong>Dependências:</strong> GD-003.</p>
+<h2 id="p1-operacao-como-plataforma">P1 — Operação como plataforma<a class="headerlink" href="#p1-operacao-como-plataforma" title="Permanent link">&para;</a></h2>
+<h3 id="gd-005-cadastro-e-atualizacao-de-repositorios-remotos">GD-005 — Cadastro e atualização de repositórios remotos<a class="headerlink" href="#gd-005-cadastro-e-atualizacao-de-repositorios-remotos" title="Permanent link">&para;</a></h3>
+<p><strong>Problema:</strong> a CLI aceita apenas roots locais; clone/fetch hoje depende de
+automação externa.</p>
+<p><strong>Escopo:</strong></p>
+<ul>
+<li>comandos <code>repo add</code>, <code>repo list</code>, <code>repo sync</code> e <code>repo remove</code>;</li>
+<li>URL, branch/refspec, diretório gerenciado e estado do último fetch;</li>
+<li>autenticação por mecanismo externo seguro, sem persistir tokens no banco;</li>
+<li>clone bare e fetch incremental;</li>
+<li>allowlist de hosts e limites de tamanho/tempo.</li>
+</ul>
+<p><strong>Critérios de aceite:</strong></p>
+<ul>
+<li>um remoto público pode ser cadastrado, clonado, atualizado e indexado;</li>
+<li>credenciais não aparecem em logs, URLs persistidas ou relatórios;</li>
+<li>falhas de rede são classificadas e permitem retry;</li>
+<li>remoção respeita a política de retenção do GD-004.</li>
+</ul>
+<p><strong>Tamanho:</strong> grande. <strong>Dependências:</strong> GD-004.</p>
+<h3 id="gd-006-agendamento-fila-e-concorrencia-controlada">GD-006 — Agendamento, fila e concorrência controlada<a class="headerlink" href="#gd-006-agendamento-fila-e-concorrencia-controlada" title="Permanent link">&para;</a></h3>
+<p><strong>Problema:</strong> não há coordenador de jobs ou exclusão mútua por repositório.</p>
+<p><strong>Escopo:</strong></p>
+<ul>
+<li>fila persistente de sync/hydrate/search/UAST;</li>
+<li>lease por repositório com timeout;</li>
+<li>retries exponenciais para falhas transitórias;</li>
+<li>limites globais e por estágio;</li>
+<li>cancelamento gracioso e retomada.</li>
+</ul>
+<p><strong>Critérios de aceite:</strong></p>
+<ul>
+<li>dois workers não publicam simultaneamente o mesmo repositório;</li>
+<li>job interrompido expira e pode ser retomado;</li>
+<li>retries não repetem falhas permanentes indefinidamente;</li>
+<li>backlog e duração ficam observáveis.</li>
+</ul>
+<p><strong>Tamanho:</strong> grande. <strong>Dependências:</strong> GD-003, GD-005.</p>
+<h3 id="gd-007-observabilidade-operacional">GD-007 — Observabilidade operacional<a class="headerlink" href="#gd-007-observabilidade-operacional" title="Permanent link">&para;</a></h3>
+<p><strong>Problema:</strong> existem logs e contadores finais, mas não métricas, traces ou
+histórico persistente de execução.</p>
+<p><strong>Escopo:</strong></p>
+<ul>
+<li><code>run_id</code> em todos os logs;</li>
+<li>métricas de duração, throughput, skips, erros e backlog;</li>
+<li>endpoints separados de liveness/readiness quando em modo serviço;</li>
+<li>dashboard e alertas de referência;</li>
+<li>queries de cobertura publicadas no runbook.</li>
+</ul>
+<p><strong>Critérios de aceite:</strong></p>
+<ul>
+<li>uma falha pode ser correlacionada do job ao repositório e commit;</li>
+<li>readiness falha quando banco, migration ou roots obrigatórios falham;</li>
+<li>alertas cobrem falha repetida, backlog e queda de cobertura.</li>
+</ul>
+<p><strong>Tamanho:</strong> médio. <strong>Dependências:</strong> GD-003; integra com GD-006.</p>
+<h3 id="gd-008-busca-por-snapshot-e-resultados-nao-duplicados">GD-008 — Busca por snapshot e resultados não duplicados<a class="headerlink" href="#gd-008-busca-por-snapshot-e-resultados-nao-duplicados" title="Permanent link">&para;</a></h3>
+<p><strong>Problema:</strong> <code>search_code</code> pode retornar o mesmo blob para muitos commits e não
+oferece filtro direto por repositório/ref/path.</p>
+<p><strong>Escopo:</strong></p>
+<ul>
+<li>API SQL versionada com filtros por repositório, ref, commit e path;</li>
+<li>modo <code>latest</code> baseado no commit alvo da ref;</li>
+<li>destaque de trechos e linha aproximada;</li>
+<li>paginação estável;</li>
+<li>plano de compatibilidade para a função atual.</li>
+</ul>
+<p><strong>Critérios de aceite:</strong></p>
+<ul>
+<li>busca em <code>latest</code> retorna uma ocorrência por path do snapshot;</li>
+<li>filtros combinados usam índices verificados por <code>EXPLAIN</code>;</li>
+<li>paginação não perde nem duplica resultados;</li>
+<li>benchmark define limite de latência para corpus de referência.</li>
+</ul>
+<p><strong>Tamanho:</strong> grande. <strong>Dependências:</strong> GD-002, GD-004.</p>
+<h2 id="p2-expansao-semantica-e-protocolo">P2 — Expansão semântica e protocolo<a class="headerlink" href="#p2-expansao-semantica-e-protocolo" title="Permanent link">&para;</a></h2>
+<h3 id="gd-009-uast-versionada-e-multilingue">GD-009 — UAST versionada e multilíngue<a class="headerlink" href="#gd-009-uast-versionada-e-multilingue" title="Permanent link">&para;</a></h3>
+<ul>
+<li>versionar parser/schema no cache e invalidar somente dados incompatíveis;</li>
+<li>adicionar C#, TypeScript/JavaScript e Python;</li>
+<li>projetar tipos, chamadas e dependências além de funções/imports;</li>
+<li>criar fixtures reais e métricas de erro por linguagem.</li>
+</ul>
+<p><strong>Aceite resumido:</strong> rebuild seletivo por versão, três novas linguagens e
+compatibilidade documentada. <strong>Tamanho:</strong> grande. <strong>Dependências:</strong> GD-002.</p>
+<h3 id="gd-010-endurecimento-do-pgwire">GD-010 — Endurecimento do pgwire<a class="headerlink" href="#gd-010-endurecimento-do-pgwire" title="Permanent link">&para;</a></h3>
+<ul>
+<li>TLS e autenticação sem senha cleartext;</li>
+<li>autorização read-only por padrão;</li>
+<li>protocolo estendido/prepared statements;</li>
+<li>streaming de linhas com backpressure;</li>
+<li>parser SQL para classificação e hidratação sob demanda.</li>
+</ul>
+<p><strong>Aceite resumido:</strong> clientes comuns conectam com TLS, usuário read-only não
+executa DDL/DML e consultas grandes não são materializadas integralmente.
+<strong>Tamanho:</strong> grande. <strong>Dependências:</strong> GD-007.</p>
+<h3 id="gd-011-retencao-privacidade-e-exclusao">GD-011 — Retenção, privacidade e exclusão<a class="headerlink" href="#gd-011-retencao-privacidade-e-exclusao" title="Permanent link">&para;</a></h3>
+<ul>
+<li>políticas por repositório para conteúdo, histórico e caches;</li>
+<li>detecção opcional de segredos antes da hidratação;</li>
+<li>exclusão verificável e relatório de impacto;</li>
+<li>auditoria de acesso a conteúdo.</li>
+</ul>
+<p><strong>Aceite resumido:</strong> remoção elimina todas as projeções cobertas pela política e
+gera evidência auditável sem revelar o conteúdo. <strong>Tamanho:</strong> grande.
+<strong>Dependências:</strong> GD-004, GD-005.</p>
+<h2 id="primeiro-incremento-recomendado">Primeiro incremento recomendado<a class="headerlink" href="#primeiro-incremento-recomendado" title="Permanent link">&para;</a></h2>
+<p>O primeiro ciclo deve entregar GD-001 e GD-002, seguido do esqueleto de run do
+GD-003. Esse corte elimina a divergência de build, torna a busca por linguagem
+útil e cria a base observável para alterar a semântica de sincronização.</p>
+<h3 id="entregaveis-do-ciclo">Entregáveis do ciclo<a class="headerlink" href="#entregaveis-do-ciclo" title="Permanent link">&para;</a></h3>
+<ol>
+<li>toolchain 1.89 alinhada em código, container, CI e docs;</li>
+<li>módulo compartilhado de detecção de linguagem;</li>
+<li>migration de backfill de <code>files.language</code>;</li>
+<li>testes E2E com filtro por <code>csharp</code> e <code>rust</code>;</li>
+<li>tabela <code>index_runs</code> e <code>run_id</code> nos logs;</li>
+<li>ADR definindo identidade de repositório e política de reconciliação.</li>
+</ol>
+<h2 id="definicao-de-pronto-comum">Definição de pronto comum<a class="headerlink" href="#definicao-de-pronto-comum" title="Permanent link">&para;</a></h2>
+<p>Uma funcionalidade do roadmap só está pronta quando:</p>
+<ul>
+<li>migrations forward foram testadas com dados existentes;</li>
+<li>testes unitários, integração e container cobrem sucesso e falha;</li>
+<li>métricas e logs não expõem conteúdo ou credenciais;</li>
+<li>runbook contém implantação, rollback e troubleshooting;</li>
+<li>arquitetura e modelo de dados foram atualizados;</li>
+<li>impacto de compatibilidade e reindexação está explícito no changelog.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar para o topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Made DevComputaria with MkDocs
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.top", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
