@@ -1,0 +1,35 @@
+name: gitdatabase-integration-test
+
+services:
+  postgres:
+    image: postgres:16-bookworm
+    environment:
+      POSTGRES_DB: gitbase
+      POSTGRES_USER: gitbase
+      POSTGRES_PASSWORD: gitbase
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gitbase -d gitbase"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    tmpfs:
+      - /var/lib/postgresql/data
+
+  integration-test:
+    image: gitdatabase-integration-test:local
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.integration-test
+    environment:
+      DATABASE_URL: postgres://gitbase:gitbase@postgres:5432/gitbase
+      EXPECTED_REPOSITORY_NAME: DevComputaria.Prompting
+      REPORT_FILE: /reports/container-integration-test.md
+      REPOSITORY_URL: https://github.com/DevComputaria/DevComputaria.Prompting.git
+      RUST_LOG: info
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - type: bind
+        source: ${GITDATABASE_REPORT_DIR:-../test-results}
+        target: /reports

@@ -1,0 +1,66 @@
+name: Container integration test
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: container-integration-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  clone-index-and-query:
+    name: Clone, index and query repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out GitDatabase
+        uses: actions/checkout@v4
+
+      - name: Prepare report directory
+        run: mkdir -p test-results
+
+      - name: Build containers and run integration test
+        run: >-
+          docker compose
+          -f docker/docker-compose.integration-test.yml
+          up
+          --build
+          --abort-on-container-exit
+          --exit-code-from integration-test
+          integration-test
+
+      - name: Publish integration test summary
+        if: always()
+        shell: bash
+        run: |
+          report="test-results/container-integration-test.md"
+          if [[ -f "${report}" ]]; then
+            cat "${report}" | tee -a "${GITHUB_STEP_SUMMARY}"
+          else
+            message="Integration test did not produce a report. Inspect the Compose logs above."
+            printf '## Container integration test\n\n%s\n' "${message}" | tee -a "${GITHUB_STEP_SUMMARY}"
+          fi
+
+      - name: Upload integration test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: container-integration-test-report
+          path: test-results/container-integration-test.md
+          if-no-files-found: warn
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose -f docker/docker-compose.integration-test.yml logs --no-color
+
+      - name: Stop integration infrastructure
+        if: always()
+        run: docker compose -f docker/docker-compose.integration-test.yml down --volumes --remove-orphans
